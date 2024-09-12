@@ -25,6 +25,22 @@ To get started, download the latest release from the [releases page](https://git
 
 ## Code Examples
 
+## Preferred Code Style
+
+*	Keywords and operators are lowercase
+*	Standard library functions are PascalCase, with an optional lowercase single-character prefix to indicate the specialty of the function
+*	Variables are recommended to be PascalCase or camelCase
+
+```
+namespace OurNamespace ; this is for determining the namespace for files designed to be imported. It is ignored in the main file
+
+import("conio") ; import is used like a function, but it is viewed as a keyword and is lowercase
+dim ourStruct = Struct() ; dim is a keyword for dimensioning variables
+
+PrintLn(typeof(ourStruct)) ; outputs "struct". typeof is also a keyword used like a function
+
+```
+
 ### Main Function Format
 
 ```
@@ -41,7 +57,7 @@ import("conio")
 
 # Add two numbers together
 dim x = 5 + 3
-println(x)
+PrintLn(x)
 ```
 
 ### Function Definition
@@ -49,7 +65,7 @@ println(x)
 ```
 fndef PrintNameAndAge accepts name, age
 	import("conio")
-	println(format("$0 is $1 years old!", { name, age }))
+	PrintLn(Format("$0 is $1 years old!", { name, age }))
 fnret
 
 PrintNameAndAge("John", 27)
@@ -59,7 +75,7 @@ PrintNameAndAge("John", 27)
 
 ```
 fndef CreateStruct
-	Dim ourStruct = struct()
+	Dim ourStruct = Struct()
 	
 	# Struct fields are created upon their use if they do not already exist
 	ourStruct.Numbers = { 13, 29, 42, 86 }
@@ -67,5 +83,5 @@ fnret
 
 Dim result = CreateStruct()
 import("conio")
-println(result)
+PrintLn(result)
 ```
