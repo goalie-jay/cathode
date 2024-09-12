@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "zz-rt": {
+      "commandName": "Project",
+      "commandLineArgs": "main.co"
+    }
+  }
+}
