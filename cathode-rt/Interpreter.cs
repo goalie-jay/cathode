@@ -520,10 +520,8 @@ namespace cathode_rt
             return ret;
         }
 
-        private ZZObject EvaluateFunctionCallExpr()
+        private ZZObject EvaluateFunctionCallExpr(Token identifier)
         {
-            Token identifier = CurrentToken;
-            Consume(TokenType.IDENTIFIER);
             Consume(TokenType.LEFTPARENTHESIS);
 
             List<ZZObject> parameters = new List<ZZObject>();
@@ -578,38 +576,8 @@ namespace cathode_rt
             }
         }
 
-        private ZZFloat EvaluateFloatBinaryExpr(ZZFloat suppliedValue = null)
+        private ZZFloat EvaluateFloatBinaryExpr(ZZFloat lhsVal)
         {
-            ZZFloat lhsVal = 0;
-
-            if (suppliedValue == null)
-            {
-                Token lhs = CurrentToken;
-                ConsumeAny(TokenType.INTEGER_CONSTANT, TokenType.IDENTIFIER);
-
-                switch (lhs.TokenType)
-                {
-                    case TokenType.INTEGER_CONSTANT:
-                        lhsVal = (ZZFloat)lhs.Value;
-                        break;
-                    case TokenType.IDENTIFIER:
-                        if (Context.Variables.ContainsKey(((ZZString)lhs.Value).ToString()))
-                            if (Context.Variables[((ZZString)lhs.Value).ToString()] is ZZFloat)
-                                lhsVal = (ZZFloat)Context.Variables[((ZZString)lhs.Value).ToString()];
-                            else
-                                throw new InterpreterRuntimeException("Tried to use non-number type in binary expression.");
-                        else
-                            throw new InterpreterRuntimeException("Tried to look up value of an undimensioned variable.");
-
-                        break;
-                }
-            }
-            else
-                lhsVal = suppliedValue;
-
-            //if (MatchDoNotConsume(TokenType.EOL))
-            //    return (ZZInteger)lhs.Value;
-
             Token operation = CurrentToken;
             ConsumeAny(TokenType.PLUS, TokenType.MINUS, TokenType.ASTERISK, TokenType.BACKSLASH);
 
@@ -636,38 +604,8 @@ namespace cathode_rt
             return 0f;
         }
 
-        private ZZInteger EvaluateIntegerBinaryExpr(ZZInteger suppliedValue = null)
+        private ZZInteger EvaluateIntegerBinaryExpr(ZZInteger lhsVal)
         {
-            ZZInteger lhsVal = 0;
-
-            if (suppliedValue == null)
-            {
-                Token lhs = CurrentToken;
-                ConsumeAny(TokenType.INTEGER_CONSTANT, TokenType.IDENTIFIER);
-
-                switch (lhs.TokenType)
-                {
-                    case TokenType.INTEGER_CONSTANT:
-                        lhsVal = (ZZInteger)lhs.Value;
-                        break;
-                    case TokenType.IDENTIFIER:
-                        if (Context.Variables.ContainsKey(((ZZString)lhs.Value).ToString()))
-                            if (Context.Variables[((ZZString)lhs.Value).ToString()] is ZZInteger)
-                                lhsVal = (ZZInteger)Context.Variables[((ZZString)lhs.Value).ToString()];
-                            else
-                                throw new InterpreterRuntimeException("Tried to use non-number type in binary expression.");
-                        else
-                            throw new InterpreterRuntimeException("Tried to look up value of an undimensioned variable.");
-
-                        break;
-                }
-            }
-            else
-                lhsVal = suppliedValue;
-
-            //if (MatchDoNotConsume(TokenType.EOL))
-            //    return (ZZInteger)lhs.Value;
-
             Token operation = CurrentToken;
             ConsumeAny(TokenType.PLUS, TokenType.MINUS, TokenType.ASTERISK, TokenType.BACKSLASH);
 
@@ -717,10 +655,9 @@ namespace cathode_rt
             return Context.Variables[((ZZString)id.Value).ToString()];
         }
 
-        ZZObject EvaluateVariableAssignmentExpr()
+        ZZObject EvaluateVariableAssignmentExpr(Token idToken)
         {
-            ZZString id = (ZZString)CurrentToken.Value;
-            Consume(TokenType.IDENTIFIER);
+            ZZString id = (ZZString)idToken.Value;
 
             Consume(TokenType.EQUALS);
 
@@ -820,10 +757,9 @@ namespace cathode_rt
             return new ZZArray(objectsInArr.ToArray());
         }
 
-        private ZZObject EvaluateIdentifierExpr()
+        private ZZObject EvaluateVariableRetrievalExpr(Token idToken)
         {
-            ZZObject idVal = CurrentToken.Value;
-            Consume(TokenType.IDENTIFIER);
+            ZZObject idVal = idToken.Value;
 
             if (!Context.Variables.ContainsKey(((ZZString)idVal).ToString()))
                 throw new Exception("Tried to look up value of an undimensioned variable.");
@@ -833,18 +769,8 @@ namespace cathode_rt
             return val;
         }
 
-        private ZZObject EvaluateArrayAccessorExpr()
+        private ZZObject EvaluateArrayAccessorExpr(ZZArray arr)
         {
-            ZZObject arrIdentifier = CurrentToken.Value;
-            Consume(TokenType.IDENTIFIER);
-
-            if (!Context.Variables.ContainsKey(((ZZString)arrIdentifier).Contents) ||
-                !(Context.Variables[((ZZString)arrIdentifier).Contents] is ZZArray))
-                throw new InterpreterRuntimeException("Tried to access an undimensioned variable as an array, " +
-                    "or tried to access a non-array variable as an array.");
-
-            ZZArray arr = (ZZArray)Context.Variables[((ZZString)arrIdentifier).Contents];
-
             Consume(TokenType.LEFTBRACKET);
 
             ZZObject accessor = Evaluate();
@@ -862,31 +788,15 @@ namespace cathode_rt
                 arr.Objects[((ZZInteger)accessor).Value] = rhs;
                 return rhs;
             }
-            else if (CurrentToken.TokenType == TokenType.PERIOD)
-                if (arr.Objects[((ZZInteger)accessor).Value] is ZZStruct strctVal)
-                    return EvaluateStructFieldExpr(strctVal);
-                else
-                    throw new InterpreterRuntimeException("Tried to look up a field of a non-struct.");
-            else
-                return arr.Objects[((ZZInteger)accessor).Value];
+
+            if (((ZZInteger)accessor).Value >= arr.Objects.Length || ((ZZInteger)accessor).Value < 0)
+                throw new InterpreterRuntimeException("Array accessor was out of bounds.");
+
+            return EvaluateExpr(arr.Objects[((ZZInteger)accessor).Value]);
         }
 
-        private ZZObject EvaluateStructFieldExpr(ZZStruct structVal = null)
+        private ZZObject EvaluateStructFieldExpr(ZZStruct structVal)
         {
-            if (structVal == null)
-            {
-                ZZString idText = (ZZString)CurrentToken.Value;
-                Consume(TokenType.IDENTIFIER);
-
-                if (!Context.Variables.ContainsKey(idText.Contents))
-                    throw new InterpreterRuntimeException("Tried to look up a field of an undimensioned variable.");
-
-                if (!(Context.Variables[idText.Contents] is ZZStruct strct))
-                    throw new InterpreterRuntimeException("Tried to look up a field of a non-struct.");
-
-                structVal = strct;
-            }
-
             Consume(TokenType.PERIOD);
 
             ZZString memberText = (ZZString)CurrentToken.Value;
@@ -914,21 +824,56 @@ namespace cathode_rt
                 else if (fieldVal is ZZFloat zfloat)
                     return EvaluateFloatBinaryExpr(zfloat);
 
+            return EvaluateExpr(fieldVal);
+        }
+        
+        private ZZObject EvaluateBinaryExpr(ZZObject value)
+        {
+            if (value is ZZFloat zflt)
+                return EvaluateFloatBinaryExpr(zflt);
+            else if (value is ZZInteger zint)
+                return EvaluateIntegerBinaryExpr(zint);
 
-            return fieldVal;
+            throw new InterpreterRuntimeException("Tried to involve non-number type in binary expression.");
         }
 
-        private ZZObject EvaluateIdentifierBinaryExpr()
+        private ZZObject EvaluateIdentifierExpr()
         {
-            ZZObject lhs = EvaluateIdentifierExpr();
+            Token identifier = CurrentToken;
+            Consume(TokenType.IDENTIFIER);
 
-            if (lhs is ZZFloat)
-                return EvaluateFloatBinaryExpr((ZZFloat)lhs);
+            switch (CurrentToken.TokenType)
+            {
+                case TokenType.LEFTPARENTHESIS:
+                    return EvaluateFunctionCallExpr(identifier);
+                case TokenType.EQUALS:
+                    return EvaluateVariableAssignmentExpr(identifier);
+            }
 
-            if (lhs is ZZInteger)
-                return EvaluateIntegerBinaryExpr((ZZInteger)lhs);
+            return EvaluateExpr(EvaluateVariableRetrievalExpr(identifier));
+        }
 
-            throw new InterpreterRuntimeException("Tried to use non-number type in binary expression.");
+        private ZZObject EvaluateExpr(ZZObject value)
+        {
+            if ((value is ZZInteger || value is ZZFloat) &&
+                MatchDoNotConsume(TokenType.PLUS, TokenType.MINUS, TokenType.ASTERISK, TokenType.BACKSLASH))
+                return EvaluateBinaryExpr(value);
+
+            switch (CurrentToken.TokenType)
+            {
+                case TokenType.LEFTBRACKET:
+                    if (value is ZZArray zarr)
+                        return EvaluateArrayAccessorExpr(zarr);
+                    else
+                        throw new InterpreterRuntimeException("Tried to access a non-array with an array accessor.");
+                case TokenType.PERIOD:
+                    if (value is ZZStruct strct)
+                        return EvaluateStructFieldExpr(strct);
+                    else
+                        throw new InterpreterRuntimeException("Tried to access a non-struct with dot notation.");
+            }
+
+            return value;
         }
 
         private ZZObject Evaluate()
@@ -948,7 +893,6 @@ namespace cathode_rt
                         else
                         {
                             Consume(TokenType.THEN);
-
                             Context.ComparisonStack.Pop(); // If block is over, pop comparison off the stack
                                                            //   and resume normal execution
                         }
@@ -1068,63 +1012,25 @@ namespace cathode_rt
 
                         Consume(TokenType.RIGHTPARENTHESIS);
 
-                        if (MatchDoNotConsume(TokenType.PLUS, TokenType.MINUS, TokenType.ASTERISK, TokenType.BACKSLASH))
-                            if (evalResult is ZZInteger zintexpr)
-                                return EvaluateIntegerBinaryExpr(new ZZInteger(-zintexpr.Value));
-                            else if (evalResult is ZZFloat zfloatexpr)
-                                return EvaluateFloatBinaryExpr(new ZZFloat(-zfloatexpr.Value));
-                            else
-                                throw new Exception("Tried to make negative a non-integer, " +
-                                    "non-floating point value.");
-                        else if (evalResult is ZZInteger zint)
-                            return new ZZInteger(-zint.Value);
+                        if (evalResult is ZZInteger zint)
+                            return EvaluateExpr(new ZZInteger(-zint.Value));
                         else if (evalResult is ZZFloat zflt)
-                            return new ZZFloat(-zflt.Value);
+                            return EvaluateExpr(new ZZFloat(-zflt.Value));
                         else
                             throw new InterpreterRuntimeException("Tried to make negative a non-integer, " +
                                 "non-floating point value.");
                     }
 
                 case TokenType.IDENTIFIER:
-                    if (Peek().TokenType == TokenType.LEFTBRACKET)
-                        return EvaluateArrayAccessorExpr();
-                    else if (Peek().TokenType == TokenType.LEFTPARENTHESIS)
-                        return EvaluateFunctionCallExpr();
-                    else if (Peek().TokenType == TokenType.EQUALS)
-                        return EvaluateVariableAssignmentExpr();
-                    else if (Peek().TokenType == TokenType.PERIOD)
-                        return EvaluateStructFieldExpr();
-                    else if (PeekMatchDoNotConsume(TokenType.PLUS, TokenType.MINUS, TokenType.ASTERISK, TokenType.BACKSLASH))
-                        return EvaluateIdentifierBinaryExpr();
-                    else if (Context.Variables.ContainsKey(((ZZString)CurrentToken.Value).ToString()))
-                        return EvaluateIdentifierExpr();
-                    else
-                        throw new InterpreterRuntimeException("Tried to look up value of an undimensioned variable.");
+                    return EvaluateIdentifierExpr();
 
                 case TokenType.STRING_CONSTANT:
-                    {
-                        ZZObject val = CurrentToken.Value;
-                        Consume(TokenType.STRING_CONSTANT);
-                        return val;
-                    }
-
                 case TokenType.INTEGER_CONSTANT:
-                    if (PeekMatchDoNotConsume(TokenType.PLUS, TokenType.MINUS, TokenType.ASTERISK, TokenType.BACKSLASH))
-                        return EvaluateIntegerBinaryExpr();
-                    else
-                    {
-                        ZZObject val = CurrentToken.Value;
-                        Consume(TokenType.INTEGER_CONSTANT);
-                        return val;
-                    }
                 case TokenType.FLOAT_CONSTANT:
-                    if (PeekMatchDoNotConsume(TokenType.PLUS, TokenType.MINUS, TokenType.ASTERISK, TokenType.BACKSLASH))
-                        return EvaluateFloatBinaryExpr();
-                    else
                     {
                         ZZObject val = CurrentToken.Value;
-                        Consume(TokenType.FLOAT_CONSTANT);
-                        return val;
+                        ConsumeAny();
+                        return EvaluateExpr(val);
                     }
                 case TokenType.VARIABLE_DEFINITION:
                     return EvaluateVariableDimensionExpr();

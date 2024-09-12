@@ -9,13 +9,44 @@ namespace cathode_rt
 {
     public static partial class ImplMethods
     {
-        [ZZFunction("core", "arraylen")]
+        [ZZFunction("core", "StrToBytes")]
+        public static ZZArray StrToBytes(ZZString str, ZZString format)
+        {
+            byte[] bytes = { };
+
+            switch (format.Contents)
+            {
+                case "ascii":
+                    bytes = Encoding.ASCII.GetBytes(str.Contents);
+                    break;
+                case "unicode":
+                    bytes = Encoding.Unicode.GetBytes(str.Contents);
+                    break;
+                case "utf8":
+                    bytes = Encoding.UTF8.GetBytes(str.Contents);
+                    break;
+            }
+
+            List<ZZObject> arrContents = new List<ZZObject>();
+            foreach (byte b in bytes)
+                arrContents.Add(new ZZByte(b));
+
+            return new ZZArray(arrContents.ToArray());
+        }
+
+        [ZZFunction("core", "Arraylen")]
         public static ZZInteger ArrayLength(ZZArray arr)
         {
             return arr.Objects.Length;
         }
 
-        [ZZFunction("core", "format")]
+        [ZZFunction("core", "Strlen")]
+        public static ZZInteger StrLen(ZZString str)
+        {
+            return str.Length;
+        }
+
+        [ZZFunction("core", "Format")]
         public static ZZString FormatStr(ZZString str, ZZArray objs)
         {
             ZZString nw = str;
@@ -27,19 +58,19 @@ namespace cathode_rt
             return nw;
         }
 
-        [ZZFunction("core", "strcat")]
+        [ZZFunction("core", "Strcat")]
         public static ZZString ConcatenateStrings(ZZString str, ZZString str2)
         {
             return new ZZString(str.Contents + str2.Contents);
         }
 
-        [ZZFunction("core", "hasfield")]
+        [ZZFunction("core", "HasField")]
         public static ZZInteger HasField(ZZStruct strct, ZZString name)
         {
             return strct.Fields.ContainsKey(name) ? 1 : 0;
         }
 
-        [ZZFunction("core", "field")]
+        [ZZFunction("core", "Field")]
         public static ZZObject Field(ZZStruct strct, ZZString name)
         {
             if (!strct.Fields.ContainsKey(name))
@@ -48,7 +79,7 @@ namespace cathode_rt
             return strct.Fields[name];
         }
 
-        [ZZFunction("core", "setfield")]
+        [ZZFunction("core", "Setfield")]
         public static ZZVoid SetField(ZZStruct strct, ZZString name, ZZObject obj)
         {
             if (!strct.Fields.ContainsKey(name))
@@ -59,19 +90,19 @@ namespace cathode_rt
             return new ZZVoid();
         }
 
-        [ZZFunction("core", "structdata")]
-        public static ZZStruct StructData(ZZArray arr)
-        {
-            return new ZZStruct(arr);
-        }
+        //[ZZFunction("core", "StructData")]
+        //public static ZZStruct StructData(ZZArray arr)
+        //{
+        //    return new ZZStruct(arr);
+        //}
 
-        [ZZFunction("core", "struct")]
+        [ZZFunction("core", "Struct")]
         public static ZZStruct BlankStruct()
         {
             return new ZZStruct();
         }
 
-        [ZZFunction("core", "assert")]
+        [ZZFunction("core", "Assert")]
         public static ZZVoid Assert(ZZInteger test, ZZString failureMsg)
         {
             if (test == 0)
@@ -80,19 +111,19 @@ namespace cathode_rt
             return new ZZVoid();
         }
 
-        [ZZFunction("core", "except")]
+        [ZZFunction("core", "Except")]
         public static ZZVoid ThrowException(ZZString msg)
         {
             throw new InterpreterRuntimeException(msg.Contents);
         }
 
-        [ZZFunction("core", "negate")]
+        [ZZFunction("core", "Negate")]
         public static ZZInteger Negate(ZZInteger value)
         {
             return (value == 0) ? 1 : 0;
         }
 
-        [ZZFunction("core", "both")]
+        [ZZFunction("core", "Both")]
         public static ZZInteger Both(ZZInteger first, ZZInteger second)
         {
             if (first == 0)
@@ -104,7 +135,7 @@ namespace cathode_rt
             return 1;
         }
 
-        [ZZFunction("core", "either")]
+        [ZZFunction("core", "Either")]
         public static ZZInteger Either(ZZInteger first, ZZInteger second)
         {
             if (first != 0)
@@ -116,7 +147,7 @@ namespace cathode_rt
             return 0;
         }
 
-        [ZZFunction("core", "lessthan")]
+        [ZZFunction("core", "LessThan")]
         public static ZZInteger LessThan(ZZObject first, ZZObject second)
         {
             if (first is ZZInteger zint1)
@@ -125,19 +156,19 @@ namespace cathode_rt
                 else if (second is ZZFloat zfloat2)
                     return ((float)zint1.Value < zfloat2.Value) ? 1 : 0;
                 else
-                    throw new InterpreterRuntimeException("Tried to use lessthan() on a non-number data type.");
+                    throw new ArgumentException("Tried to use LessThan() on a non-number data type.");
             else if (first is ZZFloat zfloat1)
                 if (second is ZZInteger zint2)
                     return (zfloat1.Value < (float)zint2.Value) ? 1 : 0;
                 else if (second is ZZFloat zfloat2)
                     return (zfloat1.Value < zfloat2.Value) ? 1 : 0;
                 else
-                    throw new InterpreterRuntimeException("Tried to use lessthan() on a non-number data type.");
+                    throw new ArgumentException("Tried to use LessThan() on a non-number data type.");
             else
-                throw new InterpreterRuntimeException("Tried to use lessthan() on a non-number data type.");
+                throw new ArgumentException("Tried to use LessThan() on a non-number data type.");
         }
 
-        [ZZFunction("core", "greaterthan")]
+        [ZZFunction("core", "GreaterThan")]
         public static ZZInteger GreaterThan(ZZObject first, ZZObject second)
         {
             if (first is ZZInteger zint1)
@@ -146,19 +177,19 @@ namespace cathode_rt
                 else if (second is ZZFloat zfloat2)
                     return ((float)zint1.Value > zfloat2.Value) ? 1 : 0;
                 else
-                    throw new InterpreterRuntimeException("Tried to use greaterthan() on a non-number data type.");
+                    throw new ArgumentException("Tried to use GreaterThan() on a non-number data type.");
             else if (first is ZZFloat zfloat1)
                 if (second is ZZInteger zint2)
                     return (zfloat1.Value > (float)zint2.Value) ? 1 : 0;
                 else if (second is ZZFloat zfloat2)
                     return (zfloat1.Value > zfloat2.Value) ? 1 : 0;
                 else
-                    throw new InterpreterRuntimeException("Tried to use greaterthan() on a non-number data type.");
+                    throw new ArgumentException("Tried to use GreaterThan() on a non-number data type.");
             else
-                throw new InterpreterRuntimeException("Tried to use greaterthan() on a non-number data type.");
+                throw new ArgumentException("Tried to use GreaterThan() on a non-number data type.");
         }
 
-        [ZZFunction("core", "equal")]
+        [ZZFunction("core", "Equal")]
         public static ZZInteger Compare(ZZObject first, ZZObject second)
         {
             if (first is ZZString zstrA)
@@ -199,7 +230,7 @@ namespace cathode_rt
             return ReferenceEquals(first, second) ? 1 : 0;
         }
 
-        [ZZFunction("core", "notequal")]
+        [ZZFunction("core", "NotEqual")]
         public static ZZInteger InverseCompare(ZZObject first, ZZObject second)
         {
             return Negate(Compare(first, second));
@@ -211,20 +242,20 @@ namespace cathode_rt
             return any.GetInLanguageTypeName();
         }
 
-        [ZZFunction("core", "exit")]
+        [ZZFunction("core", "Exit")]
         public static ZZVoid Exit(ZZInteger exitCode)
         {
             Environment.Exit((int)exitCode.Value);
             return null;
         }
 
-        [ZZFunction("core", "tobyte")]
+        [ZZFunction("core", "Byte")]
         public static ZZByte ConvertToByte(ZZObject any)
         {
             return new ZZByte((byte)ConvertToInteger(any).Value);
         }
 
-        [ZZFunction("core", "toint")]
+        [ZZFunction("core", "Integer")]
         public static ZZInteger ConvertToInteger(ZZObject any)
         {
             if (any is ZZInteger)
@@ -246,7 +277,7 @@ namespace cathode_rt
             throw new InterpreterRuntimeException("Tried to convert to integer where conversion is undefined.");
         }
 
-        [ZZFunction("core", "tofloat")]
+        [ZZFunction("core", "Float")]
         public static ZZFloat ConvertToFloat(ZZObject any)
         {
             if (any is ZZFloat)
@@ -265,7 +296,7 @@ namespace cathode_rt
             throw new InterpreterRuntimeException("Tried to convert to float where conversion is undefined.");
         }
 
-        [ZZFunction("core", "tostring")]
+        [ZZFunction("core", "String")]
         public static ZZString ConvertToString(ZZObject any)
         {
             return any.ToInLanguageString();
@@ -279,7 +310,7 @@ namespace cathode_rt
             return new ZZVoid();
         }
 
-        [ZZFunction("core", "strcmp")]
+        [ZZFunction("core", "Strcmp")]
         public static ZZInteger StrCmp(ZZString lhs, ZZString rhs)
         {
             if (rhs.Length != lhs.Length)

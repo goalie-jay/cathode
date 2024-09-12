@@ -10,7 +10,7 @@ namespace cathode_rt
 {
     public static partial class ImplMethods
     {
-        [ZZFunction("system", "sys")]
+        [ZZFunction("system", "Sys")]
         public static ZZInteger SystemFn(ZZString data)
         {
             ProcessStartInfo info = new ProcessStartInfo();
@@ -24,7 +24,7 @@ namespace cathode_rt
             }
         }
 
-        [ZZFunction("system", "sleep")]
+        [ZZFunction("system", "Sleep")]
         public static ZZVoid Sleep(ZZInteger time)
         {
             System.Threading.Thread.Sleep((int)time.Value);
@@ -32,13 +32,13 @@ namespace cathode_rt
             return new ZZVoid();
         }
 
-        [ZZFunction("system", "importnative")]
-        public static ZZLongPointer ImportNative(string libName)
-        {
-            return new ZZLongPointer(LoadLibrary(libName));
-        }
+        //[ZZFunction("system", "importnative")]
+        //public static ZZLongPointer ImportNative(string libName)
+        //{
+        //    return new ZZLongPointer(LoadLibrary(libName));
+        //}
 
-        [DllImport("kernel32", SetLastError = true, CharSet = CharSet.Ansi)]
-        static extern UIntPtr LoadLibrary([MarshalAs(UnmanagedType.LPStr)] string lpFileName);
+        //[DllImport("kernel32", SetLastError = true, CharSet = CharSet.Ansi)]
+        //static extern UIntPtr LoadLibrary([MarshalAs(UnmanagedType.LPStr)] string lpFileName);
     }
 }

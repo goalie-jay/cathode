@@ -47,7 +47,18 @@ namespace cathode_rt
 
                 StreamReader sr = new StreamReader(filename);
 
-                string[] includedFiles = Preprocessor.ScanIncludes(sr);
+                string[] includedFiles;
+
+                try
+                {
+                    includedFiles = Preprocessor.ScanIncludes(sr);
+                }
+                catch (PreprocessorException ex)
+                {
+                    Console.WriteLine(ex.Message);
+                    return 1;
+                }
+
                 sr.BaseStream.Seek(0, SeekOrigin.Begin);
                 GlobalContext.FunctionsAndBodies = Preprocessor.ScanFunctionNamesToFunctionBodies(sr);
 
@@ -72,10 +83,11 @@ namespace cathode_rt
                     catch
                     {
                         Console.WriteLine($"Failed to parse included file {file}.");
+                        return 5;
                     }
                 }
 
-                string[] fnMain = GlobalContext.GetFunctionOrReturnNullIfNotPresent("main", 
+                string[] fnMain = GlobalContext.GetFunctionOrReturnNullIfNotPresent("Main", 
                     out ZZFunctionDescriptor descriptor);
                 if (fnMain == null)
                 {
@@ -86,7 +98,7 @@ namespace cathode_rt
                 ZZObject retVal = null;
                 try
                 {
-                    retVal = Executor.Execute(GlobalContext, "main", fnMain);
+                    retVal = Executor.Execute(GlobalContext, "Main", fnMain);
                 }
                 catch (ExecutorRuntimeException ex)
                 {

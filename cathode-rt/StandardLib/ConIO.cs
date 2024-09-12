@@ -9,7 +9,7 @@ namespace cathode_rt
     public static partial class ImplMethods
     {
 
-        [ZZFunction("conio", "print")]
+        [ZZFunction("conio", "Print")]
         public static ZZVoid Print(ZZString data)
         {
             Console.Write(data.ToString());
@@ -17,7 +17,7 @@ namespace cathode_rt
             return null;
         }
 
-        [ZZFunction("conio", "println")]
+        [ZZFunction("conio", "PrintLn")]
         public static ZZVoid PrintLn(ZZString data)
         {
             Console.WriteLine(data.ToString());
@@ -25,7 +25,7 @@ namespace cathode_rt
             return null;
         }
 
-        [ZZFunction("conio", "readln")]
+        [ZZFunction("conio", "ReadLn")]
         public static ZZString ReadLn()
         {
             return new ZZString(Console.ReadLine());

@@ -9,13 +9,13 @@ namespace cathode_rt
 {
     public static partial class ImplMethods
     {
-        [ZZFunction("fileio", "dexists")]
+        [ZZFunction("fileio", "dExists")]
         public static ZZInteger DirectoryExists(ZZString dirName)
         {
             return Directory.Exists(dirName.Contents) ? 1 : 0;
         }
 
-        [ZZFunction("fileio", "dcreate")]
+        [ZZFunction("fileio", "dCreate")]
         public static ZZInteger CreateDirectory(ZZString dirName)
         {
             try
@@ -26,7 +26,7 @@ namespace cathode_rt
             catch { return 0; }
         }
 
-        [ZZFunction("fileio", "dunlink")]
+        [ZZFunction("fileio", "dUnlink")]
         public static ZZInteger DeleteDirectory(ZZString dirName)
         {
             try
@@ -37,7 +37,7 @@ namespace cathode_rt
             catch { return 0; }
         }
 
-        [ZZFunction("fileio", "funlink")]
+        [ZZFunction("fileio", "fUnlink")]
         public static ZZInteger DeleteFile(ZZString filename)
         {
             try
@@ -48,7 +48,7 @@ namespace cathode_rt
             catch { return 0; }
         }
 
-        [ZZFunction("fileio", "fcheckhandle")]
+        [ZZFunction("fileio", "fCheckHandle")]
         public static ZZInteger CheckHandle(ZZFileHandle handle)
         {
             if (handle.Stream == null)
@@ -57,7 +57,7 @@ namespace cathode_rt
             return 1;
         }
 
-        [ZZFunction("fileio", "fopen")]
+        [ZZFunction("fileio", "fOpen")]
         public static ZZObject OpenFile(ZZString filename, ZZString perms)
         {
             FileStream stream = null;
@@ -87,13 +87,13 @@ namespace cathode_rt
 
             return new ZZVoid();
         }
-        [ZZFunction("fileio", "fexists")]
+        [ZZFunction("fileio", "fExists")]
         public static ZZInteger FileExists(ZZString filename)
         {
             return File.Exists(filename.Contents) ? 1 : 0;
         }
         
-        [ZZFunction("fileio", "fcreate")]
+        [ZZFunction("fileio", "fCreate")]
         public static ZZObject CreateFile(ZZString filename)
         {
             try
@@ -104,20 +104,20 @@ namespace cathode_rt
             catch { return new ZZVoid(); }
         }
 
-        [ZZFunction("fileio", "fgetfullpath")]
+        [ZZFunction("fileio", "fGetPath")]
         public static ZZString GetFullPath(ZZString filename)
         {
             return Path.GetFullPath(filename.Contents);
         }
 
-        [ZZFunction("fileio", "fclose")]
+        [ZZFunction("fileio", "fClose")]
         public static ZZVoid FileClose(ZZFileHandle handle)
         {
             handle.Stream.Dispose();
             return new ZZVoid();
         }
 
-        [ZZFunction("fileio", "freadline")]
+        [ZZFunction("fileio", "fReadLine")]
         public static ZZString FileReadline(ZZFileHandle handle)
         {
             List<char> vs = new List<char>();
@@ -135,26 +135,26 @@ namespace cathode_rt
             return new ZZString(new string(vs.ToArray()));
         }
 
-        [ZZFunction("fileio", "flen")]
+        [ZZFunction("fileio", "fLen")]
         public static ZZInteger GetFileLength(ZZFileHandle handle)
         {
             return handle.Stream.Length;
         }
 
-        [ZZFunction("fileio", "fgetpos")]
+        [ZZFunction("fileio", "fGetPos")]
         public static ZZInteger GetFilePosition(ZZFileHandle handle)
         {
             return handle.Stream.Position;
         }
 
-        [ZZFunction("fileio", "fsetpos")]
+        [ZZFunction("fileio", "fSetPos")]
         public static ZZVoid SetFilePosition(ZZFileHandle handle, ZZInteger position)
         {
             handle.Stream.Position = position.Value;
             return new ZZVoid();
         }
 
-        [ZZFunction("fileio", "fread")]
+        [ZZFunction("fileio", "fRead")]
         public static ZZObject FileRead(ZZFileHandle handle, int byteCount)
         {
             byte[] arr = new byte[byteCount];
@@ -175,7 +175,7 @@ namespace cathode_rt
             return new ZZArray(objects.ToArray());
         }
 
-        [ZZFunction("fileio", "fwrite")]
+        [ZZFunction("fileio", "fWrite")]
         public static ZZInteger FileWrite(ZZFileHandle handle, ZZArray byteArray)
         {
             byte[] bytesNative = new byte[byteArray.Objects.Length];
@@ -194,7 +194,7 @@ namespace cathode_rt
             catch { return 0; }
         }
 
-        [ZZFunction("fileio", "fwriteline")]
+        [ZZFunction("fileio", "fWriteLine")]
         public static ZZInteger FileWriteLine(ZZFileHandle handle, ZZString line, ZZString encoding)
         {
             byte[] data;
