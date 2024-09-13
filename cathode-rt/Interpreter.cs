@@ -779,7 +779,7 @@ namespace cathode_rt
             ZZObject accessor = Evaluate();
 
             if (!(accessor is ZZInteger))
-                throw new InterpreterRuntimeException("Tried to use a non-integer value as an array accessor.");
+                throw new InterpreterRuntimeException("Tried to use a non-integer value to index an array.");
 
             Consume(TokenType.RIGHTBRACKET);
 
@@ -793,7 +793,7 @@ namespace cathode_rt
             }
 
             if (((ZZInteger)accessor).Value >= arr.Objects.Length || ((ZZInteger)accessor).Value < 0)
-                throw new InterpreterRuntimeException("Array accessor was out of bounds.");
+                throw new InterpreterRuntimeException("Array index was out of bounds.");
 
             return EvaluateExpr(arr.Objects[((ZZInteger)accessor).Value]);
         }

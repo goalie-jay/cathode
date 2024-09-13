@@ -1,4 +1,4 @@
-# Cathode Standard Library Documentation
+# Cathode Standard Library And Types Documentation
 
 ## Namespaces
 
@@ -25,3 +25,15 @@
 ### import(str)
 
 * Imports the given namespace
+
+### !
+
+* Inverts the logical expression in front of it
+
+### -(value)
+
+* Flips the sign of the number type inside the parentheses
+
+### [] (array[accessor])
+
+* Produces the value at the given index of the array to be used in an expression
