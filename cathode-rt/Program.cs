@@ -8,6 +8,10 @@ namespace cathode_rt
     {
         public static ExecutionContext GlobalContext;
         public static ExecutionContext CurrentlyExecutingContext;
+        public static string ExecutingFile = string.Empty;
+        public const int MajorVersionNumber = 0;
+        public const int MinorVersionNumber = 0;
+        public const int IncrementVersionNumber = 1;
 
         static int Main(string[] args)
         {
@@ -46,6 +50,8 @@ namespace cathode_rt
                 }
 
                 StreamReader sr = new StreamReader(filename);
+
+                ExecutingFile = filename;
 
                 string[] includedFiles;
 

@@ -38,27 +38,27 @@ namespace cathode_rt
         }
 
         [ZZFunction("fileio", "fUnlink")]
-        public static ZZInteger DeleteFile(ZZString filename)
+        public static ZZInteger DeleteFile(ZZString name)
         {
             try
             {
-                File.Delete(filename.Contents);
+                File.Delete(name.Contents);
                 return 1;
             }
             catch { return 0; }
         }
 
-        [ZZFunction("fileio", "fCheckHandle")]
-        public static ZZInteger CheckHandle(ZZFileHandle handle)
-        {
-            if (handle.Stream == null)
-                return 0;
+        //[ZZFunction("fileio", "fCheckHandle")]
+        //public static ZZInteger CheckHandle(ZZFileHandle handle)
+        //{
+        //    if (handle.Stream == null)
+        //        return 0;
 
-            return 1;
-        }
+        //    return 1;
+        //}
 
         [ZZFunction("fileio", "fOpen")]
-        public static ZZObject OpenFile(ZZString filename, ZZString perms)
+        public static ZZObject OpenFile(ZZString name, ZZString perms)
         {
             FileStream stream = null;
             try
@@ -78,10 +78,10 @@ namespace cathode_rt
                         _perms = FileAccess.Write;
                         break;
                     default:
-                        return new ZZFileHandle(null);
+                        return new ZZVoid();
                 }
 
-                stream = File.Open(filename.ToString(), _mode, _perms);
+                stream = File.Open(name.ToString(), _mode, _perms);
             }
             catch { }
 
@@ -105,9 +105,13 @@ namespace cathode_rt
         }
 
         [ZZFunction("fileio", "fGetPath")]
-        public static ZZString GetFullPath(ZZString filename)
+        public static ZZObject GetFullPath(ZZString filename)
         {
-            return Path.GetFullPath(filename.Contents);
+            try
+            {
+                return new ZZString(Path.GetFullPath(filename.Contents));
+            }
+            catch { return new ZZVoid(); }
         }
 
         [ZZFunction("fileio", "fClose")]
@@ -118,27 +122,35 @@ namespace cathode_rt
         }
 
         [ZZFunction("fileio", "fReadLine")]
-        public static ZZString FileReadline(ZZFileHandle handle)
+        public static ZZObject FileReadline(ZZFileHandle handle)
         {
-            List<char> vs = new List<char>();
-
-            while (handle.Stream.CanRead)
+            try
             {
-                int bt = handle.Stream.ReadByte();
+                List<char> vs = new List<char>();
 
-                if (bt == -1 || (char)bt == '\n')
-                    break;
+                while (handle.Stream.CanRead)
+                {
+                    int bt = handle.Stream.ReadByte();
 
-                vs.Add((char)bt);
+                    if (bt == -1 || (char)bt == '\n')
+                        break;
+
+                    vs.Add((char)bt);
+                }
+
+                return new ZZString(new string(vs.ToArray()));
             }
-
-            return new ZZString(new string(vs.ToArray()));
+            catch { return new ZZVoid(); }
         }
 
         [ZZFunction("fileio", "fLen")]
-        public static ZZInteger GetFileLength(ZZFileHandle handle)
+        public static ZZObject GetFileLength(ZZFileHandle handle)
         {
-            return handle.Stream.Length;
+            try
+            {
+                return new ZZInteger(handle.Stream.Length);
+            }
+            catch { return new ZZVoid(); }
         }
 
         [ZZFunction("fileio", "fGetPos")]
@@ -150,18 +162,21 @@ namespace cathode_rt
         [ZZFunction("fileio", "fSetPos")]
         public static ZZVoid SetFilePosition(ZZFileHandle handle, ZZInteger position)
         {
+            if (position.Value < 0)
+                throw new ArgumentException();
+
             handle.Stream.Position = position.Value;
             return new ZZVoid();
         }
 
         [ZZFunction("fileio", "fRead")]
-        public static ZZObject FileRead(ZZFileHandle handle, int byteCount)
+        public static ZZObject FileRead(ZZFileHandle handle, int count)
         {
-            byte[] arr = new byte[byteCount];
+            byte[] arr = new byte[count];
             int bytesRead = -1;
             try
             {
-                bytesRead = handle.Stream.Read(arr, 0, byteCount);
+                bytesRead = handle.Stream.Read(arr, 0, count);
             }
             catch { return new ZZVoid(); }
 
@@ -176,12 +191,12 @@ namespace cathode_rt
         }
 
         [ZZFunction("fileio", "fWrite")]
-        public static ZZInteger FileWrite(ZZFileHandle handle, ZZArray byteArray)
+        public static ZZInteger FileWrite(ZZFileHandle handle, ZZArray arr)
         {
-            byte[] bytesNative = new byte[byteArray.Objects.Length];
+            byte[] bytesNative = new byte[arr.Objects.Length];
 
             for (int i = 0; i < bytesNative.Length; ++i)
-                if (byteArray.Objects[i] is ZZByte bt)
+                if (arr.Objects[i] is ZZByte bt)
                     bytesNative[i] = bt.Value;
                 else
                     throw new ArgumentException();

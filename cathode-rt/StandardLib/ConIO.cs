@@ -10,17 +10,17 @@ namespace cathode_rt
     {
 
         [ZZFunction("conio", "Print")]
-        public static ZZVoid Print(ZZString data)
+        public static ZZVoid Print(ZZString str)
         {
-            Console.Write(data.ToString());
+            Console.Write(str.ToString());
 
             return null;
         }
 
         [ZZFunction("conio", "PrintLn")]
-        public static ZZVoid PrintLn(ZZString data)
+        public static ZZVoid PrintLn(ZZString str)
         {
-            Console.WriteLine(data.ToString());
+            Console.WriteLine(str.ToString());
 
             return null;
         }

@@ -995,6 +995,15 @@ namespace cathode_rt
                 case TokenType.LEFTCURLYBRACKET:
                     return EvaluateArrayExpr();
 
+                case TokenType.LEFTPARENTHESIS:
+                    {
+                        Consume(TokenType.LEFTPARENTHESIS);
+                        ZZObject evalResult = Evaluate();
+                        Consume(TokenType.RIGHTPARENTHESIS);
+
+                        return evalResult;
+                    }
+
                 case TokenType.EXCLAMATION:
                     {
                         Consume(TokenType.EXCLAMATION);

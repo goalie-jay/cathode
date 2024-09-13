@@ -9,6 +9,27 @@ namespace cathode_rt
 {
     public static partial class ImplMethods
     {
+        [ZZFunction("core", "RuntimeInfo")]
+        public static ZZStruct GetRuntimeInfo()
+        {
+            ZZStruct strct = new ZZStruct();
+
+            strct.Fields.Add("ExecutingFile", new ZZString(Program.ExecutingFile));
+            strct.Fields.Add("ProcessId", new ZZInteger(Environment.ProcessId));
+            strct.Fields.Add("NameOfUser", new ZZString(Environment.UserName));
+            strct.Fields.Add("NameOfMachine", new ZZString(Environment.MachineName));
+            strct.Fields.Add("X64", new ZZInteger(Environment.Is64BitOperatingSystem ? 1 : 0));
+
+            ZZStruct interpreterInfo = new ZZStruct();
+            interpreterInfo.Fields.Add("MajorVersionNumber", new ZZInteger(Program.MajorVersionNumber));
+            interpreterInfo.Fields.Add("MinorVersionNumber", new ZZInteger(Program.MinorVersionNumber));
+            interpreterInfo.Fields.Add("IncrementVersionNumber", new ZZInteger(Program.IncrementVersionNumber));
+
+            strct.Fields.Add("InterpreterInfo", interpreterInfo);
+
+            return strct;
+        }
+
         [ZZFunction("core", "RandomBytes")]
         public static ZZArray RandomBytes(ZZInteger length)
         {

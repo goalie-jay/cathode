@@ -6,6 +6,12 @@
 
 ### Functions
 
+#### RuntimeInfo()
+
+*	Arguments: none
+*	Returns: struct
+*	Description: Returns a struct containing information about the interpreter and the operating system in the format { ExecutingFile (string, location of the currently executing program), ProcessId (integer), NameOfUser (string), NameOfMachine (string), X64 (integer), InterpreterInfo (struct) { MajorVersionNumber (integer), MinorVersionNumber (integer), IncrementVersionNumber (integer) } }
+
 #### RandomBytes(length)
 
 *	Arguments: length (integer)
