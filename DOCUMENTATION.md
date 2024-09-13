@@ -34,6 +34,6 @@
 
 * Flips the sign of the number type inside the parentheses
 
-### [] (array[accessor])
+### [] (array[index])
 
 * Produces the value at the given index of the array to be used in an expression
