@@ -557,7 +557,7 @@ namespace cathode_rt
 
                 ExecutionContext callContext = new ExecutionContext();
                 for (int i = 0; i < parameters.Count; ++i)
-                    callContext.Variables.Add(descriptor.Arguments[0],
+                    callContext.Variables.Add(descriptor.Arguments[i],
                         parameters[i]); // Line up our values with the parameter names
 
                 return Executor.Execute(callContext, descriptor.Name, userFn);

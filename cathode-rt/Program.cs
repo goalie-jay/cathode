@@ -88,7 +88,7 @@ namespace cathode_rt
                 }
 
                 string[] fnMain = GlobalContext.GetFunctionOrReturnNullIfNotPresent("Main", 
-                    out ZZFunctionDescriptor descriptor);
+                    out ZZFunctionDescriptor mainDescriptor);
                 if (fnMain == null)
                 {
                     Console.WriteLine("No main function in source file, aborting...");
@@ -98,6 +98,20 @@ namespace cathode_rt
                 ZZObject retVal = null;
                 try
                 {
+                    if (mainDescriptor.Arguments.Length > 1)
+                    {
+                        Console.WriteLine("Main() had an argument count greater than one.");
+                        return 6;
+                    }
+                    else if (mainDescriptor.Arguments.Length == 1)
+                    {
+                        List<ZZString> argumentsPassed = new List<ZZString>();
+                        for (int i = 1; i < args.Length; ++i)
+                            argumentsPassed.Add(new ZZString(args[i]));
+
+                        GlobalContext.Variables.Add(mainDescriptor.Arguments[0], new ZZArray(argumentsPassed.ToArray()));
+                    }
+
                     retVal = Executor.Execute(GlobalContext, "Main", fnMain);
                 }
                 catch (ExecutorRuntimeException ex)
