@@ -88,7 +88,7 @@ namespace cathode_rt
                 CurrentToken = GetNextToken();
             else
                 throw new InterpreterRuntimeException($"Unexpected token of type " +
-                    $"{Enum.GetName(CurrentToken.TokenType)} where {Enum.GetName(expectedType)} was " +
+                    $"{Enum.GetName(CurrentToken.TokenType)} where type {Enum.GetName(expectedType)} was " +
                     $"expected.");
         }
 
@@ -98,12 +98,21 @@ namespace cathode_rt
             {
                 CurrentToken = GetNextToken();
                 return;
-            }    
+            }
 
             if (expectedTypes.Contains(CurrentToken.TokenType))
                 CurrentToken = GetNextToken();
             else
-                throw new Exception("shit!");
+            {
+                List<string> prettyTokenTypes = new List<string>();
+
+                foreach (TokenType tt in expectedTypes)
+                    prettyTokenTypes.Add(Enum.GetName(tt));
+
+                throw new InterpreterRuntimeException($"Unexpected token of type " +
+                    $"{Enum.GetName(CurrentToken.TokenType)} where types {"{"} {string.Join(", ", prettyTokenTypes)} {"}"} " +
+                    $"was expected.");
+            }
         }
 
         bool MatchDoNotConsume(params TokenType[] expectedTypes)
