@@ -52,10 +52,10 @@ fnret
 ### Basic Arithmetic
 
 ```
-# Import console I/O namespace
+; Import console I/O namespace
 import("conio")
 
-# Add two numbers together
+; Add two numbers together
 dim x = 5 + 3
 PrintLn(x)
 ```
@@ -77,7 +77,7 @@ PrintNameAndAge("John", 27)
 fndef CreateStruct
 	Dim ourStruct = Struct()
 	
-	# Struct fields are created upon their use if they do not already exist
+	; Struct fields are created upon their use if they do not already exist
 	ourStruct.Numbers = { 13, 29, 42, 86 }
 fnret
 
