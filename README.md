@@ -85,5 +85,5 @@ fnret
 
 Dim result = CreateStruct()
 import("conio")
-PrintLn(result)
+PrintLn(result.Numbers)
 ```

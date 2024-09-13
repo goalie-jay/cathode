@@ -142,9 +142,25 @@ namespace cathode_rt
             return lhs.Value == rhs.Value;
         }
 
+        public static bool operator==(ZZFloat lhs, ZZInteger rhs)
+        {
+            if (ReferenceEquals(lhs, rhs))
+                return true;
+
+            if (ReferenceEquals(rhs, null))
+                return false;
+
+            return lhs.Value == rhs.Value;
+        }
+
         public static bool operator!=(ZZFloat lhs, ZZFloat rhs)
         {
-            return !(lhs.Value == rhs.Value);
+            return !(lhs == rhs);
+        }
+
+        public static bool operator !=(ZZFloat lhs, ZZInteger rhs)
+        {
+            return !(lhs == rhs);
         }
 
         public override bool Equals(object obj)
@@ -227,9 +243,25 @@ namespace cathode_rt
             return lhs.Value == rhs.Value;
         }
 
+        public static bool operator==(ZZInteger lhs, ZZFloat rhs)
+        {
+            if (ReferenceEquals(lhs, rhs))
+                return true;
+
+            if (ReferenceEquals(rhs, null))
+                return false;
+
+            return lhs.Value == rhs.Value;
+        }
+
         public static bool operator!=(ZZInteger lhs, ZZInteger rhs)
         {
-            return !(lhs.Value == rhs.Value);
+            return !(lhs == rhs);
+        }
+
+        public static bool operator!=(ZZInteger lhs, ZZFloat rhs)
+        {
+            return !(lhs == rhs);
         }
 
         public override bool Equals(object obj)
@@ -353,7 +385,7 @@ namespace cathode_rt
 
         public override ZZString GetInLanguageTypeName()
         {
-            return new ZZString("handle");
+            return new ZZString("filehandle");
         }
     }
 

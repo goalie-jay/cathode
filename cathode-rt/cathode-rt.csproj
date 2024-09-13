@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>cathode-rt</RootNamespace>
+    <RootNamespace>cathode_rt</RootNamespace>
     <AssemblyName>cathode-rt</AssemblyName>
   </PropertyGroup>
 

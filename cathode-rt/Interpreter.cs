@@ -87,7 +87,9 @@ namespace cathode_rt
             if (CurrentToken.TokenType == expectedType)
                 CurrentToken = GetNextToken();
             else
-                throw new Exception("shit!");
+                throw new InterpreterRuntimeException($"Unexpected token of type " +
+                    $"{Enum.GetName(CurrentToken.TokenType)} where {Enum.GetName(expectedType)} was " +
+                    $"expected.");
         }
 
         void ConsumeAny(params TokenType[] expectedTypes)
@@ -290,11 +292,8 @@ namespace cathode_rt
                         if (Position < Text.Length && CurrentChar == 'd')
                         {
                             ++Position;
-                            if (Position >= Text.Length || char.IsWhiteSpace(CurrentChar))
-                            {
-                                ++Position;
+                            if (Position >= Text.Length || !char.IsLetterOrDigit(CurrentChar))
                                 return new Token(TokenType.VOID, (ZZString)"void");
-                            }
                         }
                     }
                 }
@@ -409,6 +408,8 @@ namespace cathode_rt
                     if (Position >= Text.Length)
                         break;
                 }
+
+                Debug.Assert(identifier.ToString() != "void");
 
                 return new Token(TokenType.IDENTIFIER, (ZZString)identifier.ToString());
             }
@@ -555,12 +556,14 @@ namespace cathode_rt
                     throw new InterpreterRuntimeException("Tried to supply an incorrect amount of parameters in " +
                         "a function call.");
 
-                ExecutionContext callContext = new ExecutionContext();
-                for (int i = 0; i < parameters.Count; ++i)
-                    callContext.Variables.Add(descriptor.Arguments[i],
-                        parameters[i]); // Line up our values with the parameter names
+                using (ExecutionContext callContext = new ExecutionContext())
+                {
+                    for (int i = 0; i < parameters.Count; ++i)
+                        callContext.Variables.Add(descriptor.Arguments[i],
+                            parameters[i]); // Line up our values with the parameter names
 
-                return Executor.Execute(callContext, descriptor.Name, userFn);
+                    return Executor.Execute(callContext, descriptor.Name, userFn);
+                }
             }
 
             try
