@@ -6,8 +6,8 @@ A dynamically-typed, interpreted programming language that believes in using fun
 
 ## Features
 
-*   **Dynamic typing**: No need to declare variable types beforehand
-*	**Variable clarity**: While types are dynamic, variables must be dimensioned to be used, eliminating ambiguity over whether a variable is being created or simply assigned
+*   **Dynamic typing**: Variables can hold any type of data at any time
+*	**Variable clarity**: While types are dynamic and struct fields can be assigned at will, freestanding variables must be dimensioned to be used, eliminating ambiguity over whether a variable is being created or simply assigned
 *   **Everything is a function**: Operators are rarely used, and functions are favored
 *   **Unique syntax**: Blend elements from various influences for a fun and readable coding experience
 *	**Imports on a functional basis**: Namespaces cannot be accessed by dot notation, and imports are done in each function at runtime. It is impossible to pollute the global namespace
@@ -17,11 +17,12 @@ A dynamically-typed, interpreted programming language that believes in using fun
 
 ### Prerequisites
 
-*   Just install the runtime
+*   Basically just download the runtime
 
 ### Installing the Language Runtime
 
-To get started, download the latest release from the [releases page](https://github.com/[rocky-horror]/cathode/releases) and follow the installation instructions.
+~~To get started, download the latest release from the [releases page](https://github.com/rocky-horror/cathode/releases) and follow the installation instructions~~
+^ You would be able to do that if releases existed yet. They don't because the language is incomplete and unstable, so you'll have to compile the interpreter to use it
 
 ## Code Examples
 
