@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -123,9 +124,9 @@ namespace cathode_rt
     {
         public override ZZObjectType ObjectType => ZZObjectType.FLOAT;
 
-        public float Value;
+        public double Value;
 
-        public ZZFloat(float value)
+        public ZZFloat(double value)
         {
             Value = value;
         }
@@ -140,7 +141,7 @@ namespace cathode_rt
             return new ZZString(Value.ToString());
         }
 
-        public static implicit operator ZZFloat(float value)
+        public static implicit operator ZZFloat(double value)
         {
             return new ZZFloat(value);
         }
@@ -226,7 +227,21 @@ namespace cathode_rt
 
         public override ZZObjectType ObjectType => ZZObjectType.INTEGER;
 
-        public long Value;
+        private long _value;
+        public long Value
+        {
+            get
+            {
+                return _value;
+            }
+            set
+            {
+                Debug.Assert(!ReferenceEquals(this, Zero) && !ReferenceEquals(this, One) &&
+                    !ReferenceEquals(this, NegativeOne));
+
+                _value = value;
+            }
+        }
 
         public ZZInteger(long value)
         {

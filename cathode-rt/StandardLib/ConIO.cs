@@ -8,6 +8,12 @@ namespace cathode_rt
 {
     public static partial class ImplMethods
     {
+        [ZZFunction("conio", "Title")]
+        public static ZZVoid SetConsoleTitle(ZZString str)
+        {
+            Console.Title = str.Contents;
+            return ZZVoid.Void;
+        }
 
         [ZZFunction("conio", "Print")]
         public static ZZVoid Print(ZZString str)

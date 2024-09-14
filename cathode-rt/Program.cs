@@ -15,7 +15,7 @@ namespace cathode_rt
 
         static int Main(string[] args)
         {
-            Console.Title = "zz-rt";
+            Console.Title = "cathode-rt";
 
             GlobalContext = new ExecutionContext(true);
 
@@ -25,7 +25,7 @@ namespace cathode_rt
                 string input;
                 while (true)
                 {
-                    Console.Write("zz-int> ");
+                    Console.Write("cathode-rt> ");
                     input = Console.ReadLine();
                     try
                     {

@@ -482,7 +482,7 @@ namespace cathode_rt
                 case ZZObjectType.BYTE:
                     return new ZZFloat(((ZZByte)obj).Value);
                 case ZZObjectType.STRING:
-                    if (float.TryParse(((ZZString)obj).Contents, out float strParsed))
+                    if (double.TryParse(((ZZString)obj).Contents, out double strParsed))
                         return new ZZFloat(strParsed);
                     else
                         return ZZVoid.Void;

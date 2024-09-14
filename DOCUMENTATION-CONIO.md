@@ -4,6 +4,12 @@
 
 ### Functions
 
+#### Title(str)
+
+*	Arguments: str (string)
+*	Returns: void
+*	Description: Sets the console window title to the given string
+
 #### Print(str)
 
 *	Arguments: str (string)

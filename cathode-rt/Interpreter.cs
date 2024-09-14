@@ -31,6 +31,7 @@ namespace cathode_rt
         PERIOD,
         EQUALS,
         VARIABLE_DEFINITION,
+        INCREMENT,
         EXCLAMATIONEQUALS,
         EQUALSEQUALS,
         DOUBLEAMPERSAND,
@@ -77,6 +78,11 @@ namespace cathode_rt
         Token CurrentToken;
         ExecutionContext Context;
         int EvaluationStackDepth = 0;
+
+        private int Atoi(char val)
+        {
+            return (int)val - 48;
+        }
 
         public Interpreter(ExecutionContext context, string text)
         {
@@ -168,7 +174,7 @@ namespace cathode_rt
                             if (Position >= Text.Length || char.IsWhiteSpace(CurrentChar))
                             {
                                 ++Position;
-                                return new Token(TokenType.THEN, (ZZString)"then");
+                                return new Token(TokenType.THEN, null);
                             }
                         }
                     }
@@ -188,7 +194,7 @@ namespace cathode_rt
                     if (Position < Text.Length && char.IsWhiteSpace(CurrentChar))
                     {
                         ++Position;
-                        return new Token(TokenType.IF, (ZZString)"if");
+                        return new Token(TokenType.IF, null);
                     }
                 }
 
@@ -212,7 +218,7 @@ namespace cathode_rt
                             if (Position >= Text.Length || char.IsWhiteSpace(CurrentChar))
                             {
                                 ++Position;
-                                return new Token(TokenType.ELSE, (ZZString)"else");
+                                return new Token(TokenType.ELSE, null);
                             }
                         }
                     }
@@ -235,8 +241,27 @@ namespace cathode_rt
                         if (Position < Text.Length && char.IsWhiteSpace(CurrentChar))
                         {
                             ++Position;
-                            return new Token(TokenType.VARIABLE_DEFINITION, (ZZString)"dim");
+                            return new Token(TokenType.VARIABLE_DEFINITION, null);
                         }
+                    }
+                }
+
+                Position = posBackup;
+            }
+
+            // inc
+            if (CurrentChar == 'i')
+            {
+                int posBackup = Position;
+                ++Position;
+                if (Position < Text.Length && CurrentChar == 'n')
+                {
+                    ++Position;
+                    if (Position < Text.Length && CurrentChar == 'c')
+                    {
+                        ++Position;
+                        if (Position < Text.Length && !char.IsLetterOrDigit(CurrentChar))
+                            return new Token(TokenType.INCREMENT, null);
                     }
                 }
 
@@ -257,7 +282,7 @@ namespace cathode_rt
                         if (Position < Text.Length && char.IsWhiteSpace(CurrentChar))
                         {
                             ++Position;
-                            return new Token(TokenType.RET, (ZZString)"ret");
+                            return new Token(TokenType.RET, null);
                         }
                     }
                 }
@@ -282,7 +307,7 @@ namespace cathode_rt
                             if (Position < Text.Length && char.IsWhiteSpace(CurrentChar))
                             {
                                 ++Position;
-                                return new Token(TokenType.POST, (ZZString)"post");
+                                return new Token(TokenType.POST, null);
                             }
                         }
                     }
@@ -334,7 +359,7 @@ namespace cathode_rt
                                 if (Position >= Text.Length || char.IsWhiteSpace(CurrentChar))
                                 {
                                     ++Position;
-                                    return new Token(TokenType.WHILE, (ZZString)"while");
+                                    return new Token(TokenType.WHILE, null);
                                 }
                             }
                         }
@@ -358,7 +383,7 @@ namespace cathode_rt
                         if (Position >= Text.Length || char.IsWhiteSpace(CurrentChar))
                         {
                             ++Position;
-                            return new Token(TokenType.ESC, (ZZString)"esc");
+                            return new Token(TokenType.ESC, null);
                         }
                     }
                 }
@@ -383,7 +408,7 @@ namespace cathode_rt
                             if (Position >= Text.Length || char.IsWhiteSpace(CurrentChar))
                             {
                                 ++Position;
-                                return new Token(TokenType.LOOP, (ZZString)"loop");
+                                return new Token(TokenType.LOOP, null);
                             }
                         }
                     }
@@ -400,7 +425,7 @@ namespace cathode_rt
                 if (Position < Text.Length && CurrentChar == '=')
                 {
                     ++Position;
-                    return new Token(TokenType.EQUALSEQUALS, (ZZString)"==");
+                    return new Token(TokenType.EQUALSEQUALS, null);
                 }
 
                 Position = posBackup;
@@ -414,7 +439,7 @@ namespace cathode_rt
                 if (Position < Text.Length && CurrentChar == '=')
                 {
                     ++Position;
-                    return new Token(TokenType.EXCLAMATIONEQUALS, (ZZString)"!=");
+                    return new Token(TokenType.EXCLAMATIONEQUALS, null);
                 }
 
                 Position = posBackup;
@@ -428,7 +453,7 @@ namespace cathode_rt
                 if (Position < Text.Length && CurrentChar == '|')
                 {
                     ++Position;
-                    return new Token(TokenType.DOUBLEPIPE, (ZZString)"||");
+                    return new Token(TokenType.DOUBLEPIPE, null);
                 }
 
                 Position = posBackup;
@@ -442,7 +467,7 @@ namespace cathode_rt
                 if (Position < Text.Length && CurrentChar == '&')
                 {
                     ++Position;
-                    return new Token(TokenType.DOUBLEAMPERSAND, (ZZString)"&&");
+                    return new Token(TokenType.DOUBLEAMPERSAND, null);
                 }
 
                 Position = posBackup;
@@ -454,7 +479,7 @@ namespace cathode_rt
 
                 while (char.IsDigit(CurrentChar))
                 {
-                    constant = (constant * 10) + int.Parse(CurrentChar.ToString());
+                    constant = (constant * 10) + Atoi(CurrentChar);
                     ++Position;
 
                     if (Position >= Text.Length)
@@ -463,7 +488,7 @@ namespace cathode_rt
                     // Float support
                     if (CurrentChar == '.')
                     {
-                        float floatConstant = (float)constant;
+                        double floatConstant = (double)constant;
                         int depth = 1;
 
                         ++Position;
@@ -473,8 +498,10 @@ namespace cathode_rt
 
                         while (char.IsDigit(CurrentChar))
                         {
-                            floatConstant = floatConstant + (int.Parse(CurrentChar.ToString()) / 
-                                (float)Math.Pow(10, depth));
+                            double add = (Atoi(CurrentChar) /
+                                (double)Math.Pow(10, depth));
+                            floatConstant = floatConstant + add;
+                            ++depth;
 
                             ++Position;
                             if (Position >= Text.Length)
@@ -499,8 +526,6 @@ namespace cathode_rt
                     if (Position >= Text.Length)
                         break;
                 }
-
-                Debug.Assert(identifier.ToString() != "void");
 
                 return new Token(TokenType.IDENTIFIER, (ZZString)identifier.ToString());
             }
@@ -548,52 +573,52 @@ namespace cathode_rt
                 {
                     case '+':
                         ++Position;
-                        return new Token(TokenType.PLUS, (ZZString)"+");
+                        return new Token(TokenType.PLUS, null);
                     case '-':
                         ++Position;
-                        return new Token(TokenType.MINUS, (ZZString)"-");
+                        return new Token(TokenType.MINUS, null);
                     case '*':
                         ++Position;
-                        return new Token(TokenType.ASTERISK, (ZZString)"*");
+                        return new Token(TokenType.ASTERISK, null);
                     case '/':
                         ++Position;
-                        return new Token(TokenType.BACKSLASH, (ZZString)"/");
+                        return new Token(TokenType.BACKSLASH, null);
                     case '(':
                         ++Position;
-                        return new Token(TokenType.LEFTPARENTHESIS, (ZZString)"(");
+                        return new Token(TokenType.LEFTPARENTHESIS, null);
                     case ')':
                         ++Position;
-                        return new Token(TokenType.RIGHTPARENTHESIS, (ZZString)")");
+                        return new Token(TokenType.RIGHTPARENTHESIS, null);
                     case '{':
                         ++Position;
-                        return new Token(TokenType.LEFTCURLYBRACKET, (ZZString)"{");
+                        return new Token(TokenType.LEFTCURLYBRACKET, null);
                     case '}':
                         ++Position;
-                        return new Token(TokenType.RIGHTCURLYBRACKET, (ZZString)"}");
+                        return new Token(TokenType.RIGHTCURLYBRACKET, null);
                     case '[':
                         ++Position;
-                        return new Token(TokenType.LEFTBRACKET, (ZZString)"[");
+                        return new Token(TokenType.LEFTBRACKET, null);
                     case ']':
                         ++Position;
-                        return new Token(TokenType.RIGHTBRACKET, (ZZString)"]");
+                        return new Token(TokenType.RIGHTBRACKET, null);
                     case ',':
                         ++Position;
-                        return new Token(TokenType.COMMA, (ZZString)",");
+                        return new Token(TokenType.COMMA, null);
                     case '.':
                         ++Position;
-                        return new Token(TokenType.PERIOD, (ZZString)".");
+                        return new Token(TokenType.PERIOD, null);
                     case '=':
                         ++Position;
-                        return new Token(TokenType.EQUALS, (ZZString)"=");
+                        return new Token(TokenType.EQUALS, null);
                     case '!':
                         ++Position;
-                        return new Token(TokenType.EXCLAMATION, (ZZString)"!");
+                        return new Token(TokenType.EXCLAMATION, null);
                     case '<':
                         ++Position;
-                        return new Token(TokenType.LESSTHAN, (ZZString)"<");
+                        return new Token(TokenType.LESSTHAN, null);
                     case '>':
                         ++Position;
-                        return new Token(TokenType.GREATERTHAN, (ZZString)">");
+                        return new Token(TokenType.GREATERTHAN, null);
                 }
 
             throw new Exception();
@@ -659,7 +684,9 @@ namespace cathode_rt
 
             try
             {
-                return EvaluateExpr((ZZObject)methodInf.Invoke(null, parameters.ToArray()));
+                ZZObject retVal = EvaluateExpr((ZZObject)methodInf.Invoke(null, parameters.ToArray()));
+
+                return retVal;
             }
             catch (InterpreterRuntimeException)
             {
@@ -1219,6 +1246,48 @@ namespace cathode_rt
                         ZZObject val = CurrentToken.Value;
                         ConsumeAny();
                         return EvaluateExpr(val);
+                    }
+                case TokenType.INCREMENT:
+                    {
+                        Consume(TokenType.INCREMENT);
+                        Consume(TokenType.LEFTPARENTHESIS);
+
+                        Token id = CurrentToken;
+                        Consume(TokenType.IDENTIFIER);
+
+                        Consume(TokenType.RIGHTPARENTHESIS);
+
+                        string name = ((ZZString)id.Value).Contents;
+                        if (!Context.Variables.ContainsKey(name))
+                            throw new InterpreterRuntimeException("Tried to fast-increment a nonexistent variable.");
+
+                        ZZObject variable = Context.Variables[name];
+
+                        // To my future self:
+                        //  This keyword caused a massive headache because it was modifying the Zero
+                        //      special integer value.
+                        //  It took forever to hunt down, so don't make that mistake again.
+                        
+                        switch (variable.ObjectType)
+                        {
+                            case ZZObjectType.INTEGER:
+                                // Do this in place, extremely fast
+
+                                ZZInteger intVar = (ZZInteger)variable;
+
+                                // Be careful not to overwrite the special values
+                                if (ReferenceEquals(intVar, ZZInteger.Zero) || ReferenceEquals(intVar, 
+                                    ZZInteger.One) || ReferenceEquals(intVar, ZZInteger.NegativeOne))
+                                    Context.Variables[name] = new ZZInteger(intVar.Value + 1);
+                                else
+                                    ++intVar.Value;
+
+                                break;
+                            default:
+                                throw new InterpreterRuntimeException("Tried to fast-increment a non-integer.");
+                        }
+
+                        return variable;
                     }
                 case TokenType.VARIABLE_DEFINITION:
                     return EvaluateVariableDimensionExpr();
