@@ -25,9 +25,13 @@ A dynamically-typed, interpreted programming language that believes in using fun
 
 *	^ You would be able to do that if releases existed. They don't yet because the language is incomplete and highly unstable, so you'll have to compile the interpreter to use it
 
+## Documentation
+
+Documentation is available [here on github](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION.md)
+
 ## Code Examples
 
-## Preferred Code Style
+### Preferred Code Style
 
 *	Keywords and operators are lowercase
 *	Standard library functions are PascalCase, with an optional lowercase single-character prefix to indicate the specialty of the function
@@ -38,7 +42,7 @@ A dynamically-typed, interpreted programming language that believes in using fun
 namespace OurNamespace ; this is for determining the namespace for files designed to be imported. It is ignored in the main file
 
 import( "conio" ) ; import is used like a function, but it is viewed as a keyword and is lowercase
-dim ourStruct = Struct( ) ; dim is a keyword for dimensioning variables
+dim ourStruct = Struct( ) ; dim is a keyword for dimensioning variables. It can be used with or without assignment; in this case ourStruct is being assigned a blank struct
 
 PrintLn( typeof( ourStruct ) ) ; outputs "struct". typeof is also a keyword used like a function
 
