@@ -17,7 +17,7 @@ A dynamically-typed, interpreted programming language that believes in using fun
 
 ### Prerequisites
 
-*   Basically just download the runtime
+*   Basically just download and compile the runtime
 
 ### Installing the Language Runtime
 
@@ -32,7 +32,7 @@ A dynamically-typed, interpreted programming language that believes in using fun
 *	Keywords and operators are lowercase
 *	Standard library functions are PascalCase, with an optional lowercase single-character prefix to indicate the specialty of the function
 *	Variables are recommended to be PascalCase or camelCase
-*	Spaces on the inside (but not the outside) of parentheses are encouraged but not required, e.g.: PrintLn( Format ( "$0 are $1!", { "Format strings, "cool" } ) )
+*	Spaces on the inside (but not the outside) of parentheses are encouraged but not required
 
 ```
 namespace OurNamespace ; this is for determining the namespace for files designed to be imported. It is ignored in the main file
