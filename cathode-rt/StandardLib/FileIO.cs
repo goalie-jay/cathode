@@ -196,8 +196,8 @@ namespace cathode_rt
             byte[] bytesNative = new byte[arr.Objects.Length];
 
             for (int i = 0; i < bytesNative.Length; ++i)
-                if (arr.Objects[i] is ZZByte bt)
-                    bytesNative[i] = bt.Value;
+                if (arr.Objects[i].ObjectType == ZZObjectType.BYTE)
+                    bytesNative[i] = ((ZZByte)arr.Objects[i]).Value;
                 else
                     throw new ArgumentException();
 

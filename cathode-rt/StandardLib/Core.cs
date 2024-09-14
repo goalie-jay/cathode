@@ -53,8 +53,8 @@ namespace cathode_rt
                 List<byte> realBytes = new List<byte>();
 
                 foreach (ZZObject obj in bytes.Objects)
-                    if (obj is ZZByte bt)
-                        realBytes.Add(bt.Value);
+                    if (obj.ObjectType == ZZObjectType.BYTE)
+                        realBytes.Add(((ZZByte)obj).Value);
                     else
                         throw new ArgumentException();
 
@@ -137,15 +137,15 @@ namespace cathode_rt
             List<string> realStrings = new List<string>();
 
             foreach (ZZObject obj in arr.Objects)
-                if (obj is ZZString _str)
-                    realStrings.Add(_str.Contents);
+                if (obj.ObjectType == ZZObjectType.STRING)
+                    realStrings.Add(((ZZString)obj).Contents);
                 else
                     throw new ArgumentException();
 
-            if (separator is ZZVoid)
+            if (separator.ObjectType == ZZObjectType.VOID)
                 return new ZZString(string.Concat(realStrings));
-            else if (separator is ZZString str)
-                return new ZZString(string.Join("str", realStrings));
+            else if (separator.ObjectType == ZZObjectType.STRING)
+                return new ZZString(string.Join(((ZZString)separator).Contents, realStrings));
 
             throw new ArgumentException();
         }
@@ -236,138 +236,169 @@ namespace cathode_rt
         [ZZFunction("core", "LessThan")]
         public static ZZInteger LessThan(ZZObject first, ZZObject second)
         {
-            if (first is ZZInteger zint1)
-                if (second is ZZInteger zint2)
-                    return (zint1.Value < zint2.Value) ? 1 : 0;
-                else if (second is ZZFloat zfloat2)
-                    return ((float)zint1.Value < zfloat2.Value) ? 1 : 0;
-                else if (second is ZZByte zbyte2)
-                    return (zint1.Value < zbyte2.Value) ? 1 : 0;
-                else
+            switch (first.ObjectType)
+            {
+                case ZZObjectType.INTEGER:
+                    switch (second.ObjectType)
+                    {
+                        case ZZObjectType.INTEGER:
+                            return (((ZZInteger)first).Value < ((ZZInteger)second).Value) ? 1 : 0;
+                        case ZZObjectType.FLOAT:
+                            return (((ZZInteger)first).Value < ((ZZFloat)second).Value) ? 1 : 0;
+                        case ZZObjectType.BYTE:
+                            return (((ZZInteger)first).Value < ((ZZByte)second).Value) ? 1 : 0;
+                        default:
+                            throw new ArgumentException("Tried to use LessThan() on a non-number data type.");
+                    }
+                case ZZObjectType.FLOAT:
+                    switch (second.ObjectType)
+                    {
+                        case ZZObjectType.INTEGER:
+                            return (((ZZFloat)first).Value < ((ZZInteger)second).Value) ? 1 : 0;
+                        case ZZObjectType.FLOAT:
+                            return (((ZZFloat)first).Value < ((ZZFloat)second).Value) ? 1 : 0;
+                        case ZZObjectType.BYTE:
+                            return (((ZZFloat)first).Value < ((ZZByte)second).Value) ? 1 : 0;
+                        default:
+                            throw new ArgumentException("Tried to use LessThan() on a non-number data type.");
+                    }
+                case ZZObjectType.BYTE:
+                    switch (second.ObjectType)
+                    {
+                        case ZZObjectType.INTEGER:
+                            return (((ZZByte)first).Value < ((ZZInteger)second).Value) ? 1 : 0;
+                        case ZZObjectType.FLOAT:
+                            return (((ZZByte)first).Value < ((ZZFloat)second).Value) ? 1 : 0;
+                        case ZZObjectType.BYTE:
+                            return (((ZZByte)first).Value < ((ZZByte)second).Value) ? 1 : 0;
+                        default:
+                            throw new ArgumentException("Tried to use LessThan() on a non-number data type.");
+                    }
+                default:
                     throw new ArgumentException("Tried to use LessThan() on a non-number data type.");
-            else if (first is ZZFloat zfloat1)
-                if (second is ZZInteger zint2)
-                    return (zfloat1.Value < (float)zint2.Value) ? 1 : 0;
-                else if (second is ZZFloat zfloat2)
-                    return (zfloat1.Value < zfloat2.Value) ? 1 : 0;
-                else if (second is ZZByte zbyte2)
-                    return (zfloat1.Value < zbyte2.Value) ? 1 : 0;
-                else
-                    throw new ArgumentException("Tried to use LessThan() on a non-number data type.");
-            else if (first is ZZFloat zbyte1)
-                if (second is ZZInteger zint2)
-                    return (zbyte1.Value < zint2.Value) ? 1 : 0;
-                else if (second is ZZFloat zfloat2)
-                    return (zbyte1.Value < zfloat2.Value) ? 1 : 0;
-                else if (second is ZZByte zbyte2)
-                    return (zbyte1.Value < zbyte2.Value) ? 1 : 0;
-                else
-                    throw new ArgumentException("Tried to use LessThan() on a non-number data type.");
-            else
-                throw new ArgumentException("Tried to use LessThan() on a non-number data type.");
+            }
         }
 
         [ZZFunction("core", "GreaterThan")]
         public static ZZInteger GreaterThan(ZZObject first, ZZObject second)
         {
-            if (first is ZZInteger zint1)
-                if (second is ZZInteger zint2)
-                    return (zint1.Value > zint2.Value) ? 1 : 0;
-                else if (second is ZZFloat zfloat2)
-                    return (zint1.Value > zfloat2.Value) ? 1 : 0;
-                else if (second is ZZByte zbyte2)
-                    return (zint1.Value > zbyte2.Value) ? 1 : 0;
-                else
+            switch (first.ObjectType)
+            {
+                case ZZObjectType.INTEGER:
+                    switch (second.ObjectType)
+                    {
+                        case ZZObjectType.INTEGER:
+                            return (((ZZInteger)first).Value > ((ZZInteger)second).Value) ? 1 : 0;
+                        case ZZObjectType.FLOAT:
+                            return (((ZZInteger)first).Value > ((ZZFloat)second).Value) ? 1 : 0;
+                        case ZZObjectType.BYTE:
+                            return (((ZZInteger)first).Value > ((ZZByte)second).Value) ? 1 : 0;
+                        default:
+                            throw new ArgumentException("Tried to use GreaterThan() on a non-number data type.");
+                    }
+                case ZZObjectType.FLOAT:
+                    switch (second.ObjectType)
+                    {
+                        case ZZObjectType.INTEGER:
+                            return (((ZZFloat)first).Value > ((ZZInteger)second).Value) ? 1 : 0;
+                        case ZZObjectType.FLOAT:
+                            return (((ZZFloat)first).Value > ((ZZFloat)second).Value) ? 1 : 0;
+                        case ZZObjectType.BYTE:
+                            return (((ZZFloat)first).Value > ((ZZByte)second).Value) ? 1 : 0;
+                        default:
+                            throw new ArgumentException("Tried to use GreaterThan() on a non-number data type.");
+                    }
+                case ZZObjectType.BYTE:
+                    switch (second.ObjectType)
+                    {
+                        case ZZObjectType.INTEGER:
+                            return (((ZZByte)first).Value > ((ZZInteger)second).Value) ? 1 : 0;
+                        case ZZObjectType.FLOAT:
+                            return (((ZZByte)first).Value > ((ZZFloat)second).Value) ? 1 : 0;
+                        case ZZObjectType.BYTE:
+                            return (((ZZByte)first).Value > ((ZZByte)second).Value) ? 1 : 0;
+                        default:
+                            throw new ArgumentException("Tried to use GreaterThan() on a non-number data type.");
+                    }
+                default:
                     throw new ArgumentException("Tried to use GreaterThan() on a non-number data type.");
-            else if (first is ZZFloat zfloat1)
-                if (second is ZZInteger zint2)
-                    return (zfloat1.Value > zint2.Value) ? 1 : 0;
-                else if (second is ZZFloat zfloat2)
-                    return (zfloat1.Value > zfloat2.Value) ? 1 : 0;
-                else if (second is ZZByte zbyte2)
-                    return (zfloat1.Value > zbyte2.Value) ? 1 : 0;
-                else
-                    throw new ArgumentException("Tried to use GreaterThan() on a non-number data type.");
-            else if (first is ZZByte zbyte1)
-                if (second is ZZInteger zint2)
-                    return (zbyte1.Value > zint2.Value) ? 1 : 0;
-                else if (second is ZZFloat zfloat2)
-                    return (zbyte1.Value > zfloat2.Value) ? 1 : 0;
-                else if (second is ZZByte zbyte2)
-                    return (zbyte1.Value > zbyte2.Value) ? 1 : 0;
-                else
-                    throw new ArgumentException("Tried to use GreaterThan() on a non-number data type.");
-            else
-                throw new ArgumentException("Tried to use GreaterThan() on a non-number data type.");
+            }
         }
 
         [ZZFunction("core", "Equal")]
         public static ZZInteger Compare(ZZObject first, ZZObject second)
         {
-            if (first is ZZString zstrA)
-            {
-                if (!(second is ZZString zstrB))
-                    return 0;
-
-                return (zstrA.Contents == zstrB.Contents) ? 1 : 0;
-            }
-
-            if (first is ZZInteger zintA)
-            {
-                if (second is ZZInteger zintb)
-                    return (zintA == zintb) ? 1 : 0;
-                else if (second is ZZFloat zfloatb)
-                    return (zintA == zfloatb) ? 1 : 0;
-                else if (second is ZZByte zbyteb)
-                    return (zintA.Value == zbyteb.Value) ? 1 : 0;
-
-                return 0;
-            }
-
-            if (first is ZZByte zbytea)
-            {
-                if (second is ZZByte zbyteb)
-                    return (zbytea.Value == zbyteb.Value) ? 1 : 0;
-                else if (second is ZZInteger zintb)
-                    return (zbytea.Value == zintb.Value) ? 1 : 0;
-                else if (second is ZZFloat zfloatb)
-                    return (zbytea.Value == zfloatb.Value) ? 1 : 0;
-
-                return 0;
-            }
-
-            if (first is ZZFloat zfloata)
-            {
-                if (second is ZZFloat zfloatb)
-                    return (zfloata == zfloatb) ? 1 : 0;
-                else if (second is ZZInteger zintb)
-                    return (zfloata == zintb) ? 1 : 0;
-                else if (second is ZZByte zbyteb)
-                    return (zfloata.Value == zbyteb.Value) ? 1 : 0;
-
-                return 0;
-            }
-
-            if (first is ZZFileHandle zfhandleA)
-            {
-                if (!(second is ZZFileHandle zfhandleB))
-                    return 0;
-
-                return (zfhandleA.Stream.Handle == zfhandleB.Stream.Handle) ? 1 : 0;
-            }
-
-            if (first is ZZLongPointer zlpA)
-            {
-                if (!(second is ZZLongPointer zlpB))
-                    return 0;
-
-                return (zlpA.Pointer == zlpB.Pointer) ? 1 : 0;
-            }
-
-            if (first is ZZVoid && second is ZZVoid)
+            if (ReferenceEquals(first, second))
                 return 1;
 
-            return ReferenceEquals(first, second) ? 1 : 0;
+            if ((first.ObjectType == ZZObjectType.VOID) && (second.ObjectType == ZZObjectType.VOID))
+                return 1;
+
+            if (first.ObjectType == ZZObjectType.FILEHANDLE)
+            {
+                if (second.ObjectType != ZZObjectType.FILEHANDLE)
+                    return 0;
+
+                return (((ZZFileHandle)first).Stream.Handle == ((ZZFileHandle)second).Stream.Handle) ? 1 : 0;
+            }
+
+            if (first.ObjectType == ZZObjectType.LONGPOINTER)
+            {
+                if (second.ObjectType != ZZObjectType.LONGPOINTER)
+                    return 0;
+
+                return (((ZZLongPointer)first).Pointer == ((ZZLongPointer)second).Pointer) ? 1 : 0;
+            }
+
+            switch (first.ObjectType)
+            {
+                case ZZObjectType.STRING:
+                    switch (second.ObjectType)
+                    {
+                        case ZZObjectType.STRING:
+                            return (((ZZString)first).Contents == ((ZZString)second).Contents) ? 1 : 0;
+                        default:
+                            return 0;
+                    }
+                case ZZObjectType.INTEGER:
+                    switch (second.ObjectType)
+                    {
+                        case ZZObjectType.INTEGER:
+                            return (((ZZInteger)first).Value == ((ZZInteger)second).Value) ? 1 : 0;
+                        case ZZObjectType.FLOAT:
+                            return (((ZZInteger)first).Value == ((ZZFloat)second).Value) ? 1 : 0;
+                        case ZZObjectType.BYTE:
+                            return (((ZZInteger)first).Value == ((ZZByte)second).Value) ? 1 : 0;
+                        default:
+                            return 0;
+                    }
+                case ZZObjectType.FLOAT:
+                    switch (second.ObjectType)
+                    {
+                        case ZZObjectType.INTEGER:
+                            return (((ZZFloat)first).Value == ((ZZInteger)second).Value) ? 1 : 0;
+                        case ZZObjectType.FLOAT:
+                            return (((ZZFloat)first).Value == ((ZZFloat)second).Value) ? 1 : 0;
+                        case ZZObjectType.BYTE:
+                            return (((ZZFloat)first).Value == ((ZZByte)second).Value) ? 1 : 0;
+                        default:
+                            return 0;
+                    }
+                case ZZObjectType.BYTE:
+                    switch (second.ObjectType)
+                    {
+                        case ZZObjectType.INTEGER:
+                            return (((ZZByte)first).Value == ((ZZInteger)second).Value) ? 1 : 0;
+                        case ZZObjectType.FLOAT:
+                            return (((ZZByte)first).Value == ((ZZFloat)second).Value) ? 1 : 0;
+                        case ZZObjectType.BYTE:
+                            return (((ZZByte)first).Value == ((ZZByte)second).Value) ? 1 : 0;
+                        default:
+                            return 0;
+                    }
+                default:
+                    return 0;
+            }
         }
 
         [ZZFunction("core", "NotEqual")]
@@ -394,7 +425,7 @@ namespace cathode_rt
         {
             ZZObject result = ConvertToInteger(obj);
 
-            if (result is ZZVoid)
+            if (result.ObjectType == ZZObjectType.VOID)
                 return result;
 
             return new ZZByte((byte)((ZZInteger)result).Value);
@@ -403,46 +434,47 @@ namespace cathode_rt
         [ZZFunction("core", "Integer")]
         public static ZZObject ConvertToInteger(ZZObject obj)
         {
-            if (obj is ZZInteger)
-                return (ZZInteger)obj;
-
-            if (obj is ZZFloat zflt)
-                return new ZZInteger((int)(zflt.Value));
-
-            if (obj is ZZString zstr)
-                if (int.TryParse(zstr.Contents, out int strParsed))
-                    return new ZZInteger(strParsed);
-                else
+            switch (obj.ObjectType)
+            {
+                case ZZObjectType.INTEGER:
+                    return obj;
+                case ZZObjectType.FLOAT:
+                    return new ZZInteger((long)((ZZFloat)obj).Value);
+                case ZZObjectType.STRING:
+                    if (int.TryParse(((ZZString)obj).Contents, out int strParsed))
+                        return new ZZInteger(strParsed);
+                    else
+                        return ZZVoid.Void;
+                case ZZObjectType.BYTE:
+                    return new ZZInteger(((ZZByte)obj).Value);
+                case ZZObjectType.FILEHANDLE:
+                    return new ZZInteger(((ZZFileHandle)obj).Stream.Handle.ToInt32());
+                case ZZObjectType.LONGPOINTER:
+                    return new ZZInteger(((ZZLongPointer)obj).Pointer.ToUInt32());
+                default:
                     return ZZVoid.Void;
-
-            if (obj is ZZByte zbyte)
-                return new ZZInteger((int)zbyte.Value);
-
-            if (obj is ZZFileHandle zhandle)
-                return new ZZInteger(zhandle.Stream == null ? 0 : zhandle.Stream.Handle.ToInt32());
-
-            throw new InterpreterRuntimeException("Tried to convert to integer where conversion is undefined.");
+            }
         }
 
         [ZZFunction("core", "Float")]
         public static ZZObject ConvertToFloat(ZZObject obj)
         {
-            if (obj is ZZFloat)
-                return (ZZFloat)obj;
-
-            if (obj is ZZInteger zint)
-                return new ZZFloat(zint.Value);
-
-            if (obj is ZZByte zbyte)
-                return new ZZFloat(zbyte.Value);
-
-            if (obj is ZZString zstr)
-                if (float.TryParse(zstr.Contents, out float strParsed))
-                    return new ZZFloat(strParsed);
-                else
+            switch (obj.ObjectType)
+            {
+                case ZZObjectType.FLOAT:
+                    return obj;
+                case ZZObjectType.INTEGER:
+                    return new ZZFloat(((ZZInteger)obj).Value);
+                case ZZObjectType.BYTE:
+                    return new ZZFloat(((ZZByte)obj).Value);
+                case ZZObjectType.STRING:
+                    if (float.TryParse(((ZZString)obj).Contents, out float strParsed))
+                        return new ZZFloat(strParsed);
+                    else
+                        return ZZVoid.Void;
+                default:
                     return ZZVoid.Void;
-
-            return ZZVoid.Void;
+            }
         }
 
         [ZZFunction("core", "String")]

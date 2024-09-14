@@ -17,7 +17,7 @@ namespace cathode_rt
         {
             Console.Title = "zz-rt";
 
-            GlobalContext = new ExecutionContext();
+            GlobalContext = new ExecutionContext(true);
 
             if (args.Length == 0)
             {
@@ -125,14 +125,16 @@ namespace cathode_rt
                     Console.WriteLine("*****");
                     Console.WriteLine(ex.Message);
                     Console.WriteLine("*****");
+
+                    retVal = GlobalContext.LastReturnValue;
                 }
                 sr.Dispose();
 
                 // Use stored retVal because global context is dead atp
 
-                if (retVal is ZZInteger zint)
+                if (retVal.ObjectType == ZZObjectType.INTEGER)
                     // Program returned integer, return it
-                    return (int)zint.Value;
+                    return (int)((ZZInteger)retVal).Value;
 
                 return 0;
             }

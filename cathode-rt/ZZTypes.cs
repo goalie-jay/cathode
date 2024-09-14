@@ -7,8 +7,30 @@ using System.Threading.Tasks;
 
 namespace cathode_rt
 {
+    // TODO: Replace all instances of if (x is ZZObject whatevs) with (if x.ObjectType == ZZObjectType.whatevs)
+    // This will be a huge optimization but will take a while to do
+    public enum ZZObjectType : byte
+    {
+        OBJECT,
+        STRING,
+        FLOAT,
+        INTEGER,
+        BYTE,
+        FILEHANDLE,
+        LONGPOINTER,
+        VOID,
+        STRUCT,
+        TUPLE,
+        ARRAY
+    }
+
     public abstract class ZZObject
     {
+        public abstract ZZObjectType ObjectType
+        {
+            get;
+        }
+
         public virtual ZZString GetInLanguageTypeName()
         {
             return new ZZString("object");
@@ -22,6 +44,8 @@ namespace cathode_rt
 
     public class ZZString : ZZObject
     {
+        public override ZZObjectType ObjectType => ZZObjectType.STRING;
+
         public string Contents;
 
         public ZZInteger Length => new ZZInteger(Contents.Length);
@@ -67,6 +91,7 @@ namespace cathode_rt
             return lhs.Contents != rhs.Contents;
         }
 
+        // This Equals() method is *not* compliant and can only be used on other ZZObject instances without crashing
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(this, obj))
@@ -75,7 +100,7 @@ namespace cathode_rt
             if (ReferenceEquals(obj, null))
                 return false;
 
-            if (!(obj is ZZString))
+            if (((ZZObject)obj).ObjectType != ZZObjectType.STRING)
                 return false;
 
             return Contents == ((ZZString)obj).Contents;
@@ -89,6 +114,8 @@ namespace cathode_rt
 
     public class ZZFloat : ZZObject
     {
+        public override ZZObjectType ObjectType => ZZObjectType.FLOAT;
+
         public float Value;
 
         public ZZFloat(float value)
@@ -163,6 +190,7 @@ namespace cathode_rt
             return !(lhs == rhs);
         }
 
+        // This Equals() method is *not* compliant and can only be used on other ZZObject instances without crashing
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(this, obj))
@@ -171,7 +199,7 @@ namespace cathode_rt
             if (ReferenceEquals(obj, null))
                 return false;
 
-            if (!(obj is ZZFloat))
+            if (((ZZObject)obj).ObjectType != ZZObjectType.FLOAT)
                 return false;
 
             return Value == ((ZZFloat)obj).Value;
@@ -185,6 +213,8 @@ namespace cathode_rt
 
     public class ZZInteger : ZZObject
     {
+        public override ZZObjectType ObjectType => ZZObjectType.INTEGER;
+
         public long Value;
 
         public ZZInteger(long value)
@@ -264,6 +294,7 @@ namespace cathode_rt
             return !(lhs == rhs);
         }
 
+        // This Equals() method is *not* compliant and can only be used on other ZZObject instances without crashing
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(this, obj))
@@ -272,7 +303,7 @@ namespace cathode_rt
             if (ReferenceEquals(obj, null))
                 return false;
 
-            if (!(obj is ZZInteger))
+            if (((ZZObject)obj).ObjectType != ZZObjectType.INTEGER)
                 return false;
 
             return Value == ((ZZInteger)obj).Value;
@@ -286,6 +317,8 @@ namespace cathode_rt
 
     public class ZZByte : ZZObject
     {
+        public override ZZObjectType ObjectType => ZZObjectType.BYTE;
+
         public byte Value;
 
         public ZZByte(byte value)
@@ -349,6 +382,7 @@ namespace cathode_rt
             return !(lhs.Value == rhs.Value);
         }
 
+        // This Equals() method is *not* compliant and can only be used on other ZZObject instances without crashing
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(this, obj))
@@ -357,7 +391,7 @@ namespace cathode_rt
             if (ReferenceEquals(obj, null))
                 return false;
 
-            if (!(obj is ZZByte))
+            if (((ZZObject)obj).ObjectType != ZZObjectType.BYTE)
                 return false;
 
             return Value == ((ZZByte)obj).Value;
@@ -371,6 +405,8 @@ namespace cathode_rt
 
     public class ZZFileHandle : ZZObject
     {
+        public override ZZObjectType ObjectType => ZZObjectType.FILEHANDLE;
+
         public FileStream Stream;
 
         public ZZFileHandle(FileStream stream)
@@ -391,6 +427,8 @@ namespace cathode_rt
 
     public class ZZLongPointer : ZZObject
     {
+        public override ZZObjectType ObjectType => ZZObjectType.LONGPOINTER;
+
         public UIntPtr Pointer;
 
         public ZZLongPointer(UIntPtr pointer)
@@ -411,6 +449,8 @@ namespace cathode_rt
 
     public class ZZVoid : ZZObject
     {
+        public override ZZObjectType ObjectType => ZZObjectType.VOID;
+
         public static readonly ZZVoid Void = new ZZVoid();
 
         private ZZVoid() { }
@@ -428,6 +468,8 @@ namespace cathode_rt
 
     public class ZZStruct : ZZObject
     {
+        public override ZZObjectType ObjectType => ZZObjectType.STRUCT;
+
         public Dictionary<ZZString, ZZObject> Fields;
 
         public ZZStruct()
@@ -435,19 +477,19 @@ namespace cathode_rt
             Fields = new Dictionary<ZZString, ZZObject>();
         }
 
-        public ZZStruct(ZZArray fieldNames /*In language array of tuples (field name str, value)*/)
-        {
-            Fields = new Dictionary<ZZString, ZZObject>();
+        //public ZZStruct(ZZArray fieldNames /*In language array of tuples (field name str, value)*/)
+        //{
+        //    Fields = new Dictionary<ZZString, ZZObject>();
 
-            foreach (ZZObject o in fieldNames.Objects)
-            {
-                if (!(o is ZZTuple tuple))
-                    throw new InterpreterRuntimeException("Struct pilot array must be of tuples of format " +
-                        "(field name string, value).");
+        //    foreach (ZZObject o in fieldNames.Objects)
+        //    {
+        //        if (!(o is ZZTuple tuple))
+        //            throw new InterpreterRuntimeException("Struct pilot array must be of tuples of format " +
+        //                "(field name string, value).");
 
-                Fields.Add(tuple.Object1.ToInLanguageString(), tuple.Object2);
-            }
-        }
+        //        Fields.Add(tuple.Object1.ToInLanguageString(), tuple.Object2);
+        //    }
+        //}
 
         public override ZZString ToInLanguageString()
         {
@@ -462,6 +504,8 @@ namespace cathode_rt
 
     public class ZZTuple : ZZObject
     {
+        public override ZZObjectType ObjectType => ZZObjectType.TUPLE;
+
         public ZZObject Object1;
         public ZZObject Object2;
 
@@ -484,6 +528,8 @@ namespace cathode_rt
 
     public class ZZArray : ZZObject
     {
+        public override ZZObjectType ObjectType => ZZObjectType.ARRAY;
+
         public ZZObject[] Objects;
 
         public ZZArray(ZZObject[] objects)

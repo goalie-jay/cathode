@@ -42,6 +42,7 @@ namespace cathode_rt
         VOID,
         WHILE,
         LOOP,
+        ESC,
 
         EOL
     }
@@ -342,6 +343,28 @@ namespace cathode_rt
                 Position = posBackup;
             }
 
+            // esc
+            if (CurrentChar == 'e')
+            {
+                int posBackup = Position;
+                ++Position;
+                if (Position < Text.Length && CurrentChar == 's')
+                {
+                    ++Position;
+                    if (Position < Text.Length && CurrentChar == 'c')
+                    {
+                        ++Position;
+                        if (Position >= Text.Length || char.IsWhiteSpace(CurrentChar))
+                        {
+                            ++Position;
+                            return new Token(TokenType.ESC, (ZZString)"esc");
+                        }
+                    }
+                }
+
+                Position = posBackup;
+            }
+
             // loop
             if (CurrentChar == 'l')
             {
@@ -615,13 +638,13 @@ namespace cathode_rt
                         callContext.Variables.Add(descriptor.Arguments[i],
                             parameters[i]); // Line up our values with the parameter names
 
-                    return Executor.Execute(callContext, descriptor.Name, userFn);
+                    return EvaluateExpr(Executor.Execute(callContext, descriptor.Name, userFn));
                 }
             }
 
             try
             {
-                return (ZZObject)methodInf.Invoke(null, parameters.ToArray());
+                return EvaluateExpr((ZZObject)methodInf.Invoke(null, parameters.ToArray()));
             }
             catch (ArgumentException)
             {
@@ -643,7 +666,7 @@ namespace cathode_rt
 
             ZZObject testRhs = Evaluate();
 
-            if (!(testRhs is ZZFloat))
+            if (testRhs.ObjectType != ZZObjectType.FLOAT)
                 throw new InterpreterRuntimeException("The right-hand side of a floating point binary" +
                     " expression was not a float.");
 
@@ -671,7 +694,7 @@ namespace cathode_rt
 
             ZZObject testRhs = Evaluate();
 
-            if (!(testRhs is ZZInteger))
+            if (testRhs.ObjectType != ZZObjectType.INTEGER)
                 throw new InterpreterRuntimeException("The right-hand side of an integer binary" +
                     " expression was not an integer.");
 
@@ -738,9 +761,11 @@ namespace cathode_rt
 
             ZZObject cmpValue = Evaluate();
 
-            if (!(cmpValue is ZZInteger integerComparison))
+            if (cmpValue.ObjectType != ZZObjectType.INTEGER)
                 throw new InterpreterRuntimeException("Tried to use an if statement with a non-integer comparison " +
                     "value.");
+
+            ZZInteger integerComparison = (ZZInteger)cmpValue;
 
             Consume(TokenType.RIGHTPARENTHESIS);
 
@@ -751,13 +776,22 @@ namespace cathode_rt
         private ZZVoid EvaluateWhileExpr()
         {
             Consume(TokenType.WHILE);
+            if (Context.ForceNextWhileToEvaluateFalse)
+            {
+                Context.WhileSkipStack.Push(1);
+                Context.ForceNextWhileToEvaluateFalse = false;
+                return ZZVoid.Void;
+            }
+
             Consume(TokenType.LEFTPARENTHESIS);
 
             ZZObject cmpValue = Evaluate();
 
-            if (!(cmpValue is ZZInteger integerComparison))
+            if (cmpValue.ObjectType != ZZObjectType.INTEGER)
                 throw new InterpreterRuntimeException("Tried to use a while loop with a non-integer comparison " +
                     "value.");
+
+            ZZInteger integerComparison = (ZZInteger)cmpValue;
 
             Consume(TokenType.RIGHTPARENTHESIS);
 
@@ -835,7 +869,7 @@ namespace cathode_rt
 
             ZZObject accessor = Evaluate();
 
-            if (!(accessor is ZZInteger))
+            if (accessor.ObjectType != ZZObjectType.INTEGER)
                 throw new InterpreterRuntimeException("Tried to use a non-integer value to index an array.");
 
             Consume(TokenType.RIGHTBRACKET);
@@ -879,20 +913,20 @@ namespace cathode_rt
             fieldVal = structVal.Fields[memberText];
 
             if (MatchDoNotConsume(TokenType.PLUS, TokenType.MINUS, TokenType.ASTERISK, TokenType.BACKSLASH))
-                if (fieldVal is ZZInteger zint)
-                    return EvaluateIntegerBinaryExpr(zint);
-                else if (fieldVal is ZZFloat zfloat)
-                    return EvaluateFloatBinaryExpr(zfloat);
+                if (fieldVal.ObjectType == ZZObjectType.INTEGER)
+                    return EvaluateIntegerBinaryExpr((ZZInteger)fieldVal);
+                else if (fieldVal.ObjectType == ZZObjectType.FLOAT)
+                    return EvaluateFloatBinaryExpr((ZZFloat)fieldVal);
 
             return EvaluateExpr(fieldVal);
         }
         
         private ZZObject EvaluateBinaryExpr(ZZObject value)
         {
-            if (value is ZZFloat zflt)
-                return EvaluateFloatBinaryExpr(zflt);
-            else if (value is ZZInteger zint)
-                return EvaluateIntegerBinaryExpr(zint);
+            if (value.ObjectType == ZZObjectType.FLOAT)
+                return EvaluateFloatBinaryExpr((ZZFloat)value);
+            else if (value.ObjectType == ZZObjectType.INTEGER)
+                return EvaluateIntegerBinaryExpr((ZZInteger)value);
 
             throw new InterpreterRuntimeException("Tried to involve non-number type in binary expression.");
         }
@@ -924,14 +958,14 @@ namespace cathode_rt
 
         private ZZObject EvaluateLogicalAndExpr(ZZObject value)
         {
-            if (!(value is ZZInteger))
+            if (value.ObjectType != ZZObjectType.INTEGER)
                 throw new InterpreterRuntimeException("Tried to use non-integer for left side of logical and expression.");
 
             Consume(TokenType.DOUBLEAMPERSAND);
 
             ZZObject evalResult = Evaluate();
 
-            if (!(evalResult is ZZInteger))
+            if (evalResult.ObjectType != ZZObjectType.INTEGER)
                 throw new InterpreterRuntimeException("Tried to use non-integer for right side of logical and expression.");
 
             return ImplMethods.Both((ZZInteger)value, (ZZInteger)evalResult);
@@ -939,14 +973,14 @@ namespace cathode_rt
 
         private ZZObject EvaluateLogicalOrExpr(ZZObject value)
         {
-            if (!(value is ZZInteger))
+            if (value.ObjectType == ZZObjectType.INTEGER)
                 throw new InterpreterRuntimeException("Tried to use non-integer for left side of logical or expression.");
 
             Consume(TokenType.DOUBLEPIPE);
 
             ZZObject evalResult = Evaluate();
 
-            if (!(evalResult is ZZInteger))
+            if (evalResult.ObjectType == ZZObjectType.INTEGER)
                 throw new InterpreterRuntimeException("Tried to use non-integer for right side of logical or expression.");
 
             return ImplMethods.Either((ZZInteger)value, (ZZInteger)evalResult);
@@ -954,7 +988,7 @@ namespace cathode_rt
 
         private ZZObject EvaluateExpr(ZZObject value)
         {
-            if ((value is ZZInteger || value is ZZFloat) &&
+            if (((value.ObjectType == ZZObjectType.INTEGER) || (value.ObjectType == ZZObjectType.FLOAT)) &&
                 MatchDoNotConsume(TokenType.PLUS, TokenType.MINUS, TokenType.ASTERISK, TokenType.BACKSLASH))
                 return EvaluateBinaryExpr(value);
 
@@ -970,13 +1004,13 @@ namespace cathode_rt
             switch (CurrentToken.TokenType)
             {
                 case TokenType.LEFTBRACKET:
-                    if (value is ZZArray zarr)
-                        return EvaluateArrayAccessorExpr(zarr);
+                    if (value.ObjectType == ZZObjectType.ARRAY)
+                        return EvaluateArrayAccessorExpr((ZZArray)value);
                     else
                         throw new InterpreterRuntimeException("Tried to access a non-array with an array accessor.");
                 case TokenType.PERIOD:
-                    if (value is ZZStruct strct)
-                        return EvaluateStructFieldExpr(strct);
+                    if (value.ObjectType == ZZObjectType.STRUCT)
+                        return EvaluateStructFieldExpr((ZZStruct)value);
                     else
                         throw new InterpreterRuntimeException("Tried to access a non-struct with dot notation.");
             }
@@ -1064,6 +1098,16 @@ namespace cathode_rt
 
                     Context.ReturnWhile = true;
                     return ZZVoid.Void;
+                case TokenType.ESC:
+                    Debug.Assert(Context.WhileReturnLines.Any());
+                    Consume(TokenType.ESC);
+
+                    if (EvaluationStackDepth != 1)
+                        throw new InterpreterRuntimeException("Tried to use esc as part of another expression.");
+
+                    Context.ReturnWhile = true;
+                    Context.ForceNextWhileToEvaluateFalse = true;
+                    return ZZVoid.Void;
 
                 case TokenType.WHILE:
                     if (EvaluationStackDepth != 1)
@@ -1109,7 +1153,7 @@ namespace cathode_rt
                     {
                         Consume(TokenType.EXCLAMATION);
                         ZZObject evalResult = Evaluate();
-                        if (evalResult is ZZInteger)
+                        if (evalResult.ObjectType == ZZObjectType.INTEGER)
                             return ImplMethods.Negate((ZZInteger)evalResult);
                         else
                             throw new InterpreterRuntimeException("Tried to negate a non-integer value.");
@@ -1125,10 +1169,10 @@ namespace cathode_rt
 
                         Consume(TokenType.RIGHTPARENTHESIS);
 
-                        if (evalResult is ZZInteger zint)
-                            return EvaluateExpr(new ZZInteger(-zint.Value));
-                        else if (evalResult is ZZFloat zflt)
-                            return EvaluateExpr(new ZZFloat(-zflt.Value));
+                        if (evalResult.ObjectType == ZZObjectType.INTEGER)
+                            return EvaluateExpr(new ZZInteger(-((ZZInteger)evalResult).Value));
+                        else if (evalResult.ObjectType == ZZObjectType.FLOAT)
+                            return EvaluateExpr(new ZZFloat(-((ZZFloat)evalResult).Value));
                         else
                             throw new InterpreterRuntimeException("Tried to make negative a non-integer, " +
                                 "non-floating point value.");

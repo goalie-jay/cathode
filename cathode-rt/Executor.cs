@@ -23,12 +23,25 @@ namespace cathode_rt
             return objs;
         }
 
+        public static Stack<ZZInteger> BackupComparisonStack(ExecutionContext ctx)
+        {
+            return new Stack<ZZInteger>(new Stack<ZZInteger>(ctx.ComparisonStack));
+        }
+
         public static void RestoreVariables(ExecutionContext ctx, Dictionary<string, ZZObject> backup)
         {
+            // Setting of modified values while ignoring ones that didn't exist before is handled before the call
+            // Putting this here because I know you (future me) will question it later
+
             ctx.Variables.Clear();
 
             foreach (string key in backup.Keys)
                 ctx.Variables.Add(key, backup[key]);
+        }
+
+        public static void RestoreComparisonStack(ExecutionContext ctx, Stack<ZZInteger> comparisonStack)
+        {
+            ctx.ComparisonStack = comparisonStack;
         }
 
         public static ZZObject Execute(ExecutionContext ctx, string fnName, string[] lines)
@@ -38,6 +51,7 @@ namespace cathode_rt
             int i = 0;
 
             Stack<Dictionary<string, ZZObject>> varsBackupForWhile = new Stack<Dictionary<string, ZZObject>>();
+            Stack<Stack<ZZInteger>> comparisonStackBackupForWhile = new Stack<Stack<ZZInteger>>();
             try
             {
                 for (i = 0; i < lines.Length; ++i)
@@ -58,6 +72,9 @@ namespace cathode_rt
 
                         // Back up the variables so unexpected behavior doesn't occur
                         varsBackupForWhile.Push(BackupVariables(ctx));
+
+                        // Back up the comparison stack in case they escape from an if statement
+                        comparisonStackBackupForWhile.Push(BackupComparisonStack(ctx));
                     }
 
                     if (ctx.ReturnWhile)
@@ -72,8 +89,11 @@ namespace cathode_rt
                             if (backed.ContainsKey(key))
                                 backed[key] = ctx.Variables[key];
 
-                        // Restore the backup
+                        // Restore the backed up variables
                         RestoreVariables(ctx, backed);
+
+                        // Restore the comparison stack
+                        RestoreComparisonStack(ctx, comparisonStackBackupForWhile.Pop());
 
                         // Pop line off the stack and return to it
                         i = ctx.WhileReturnLines.Pop() - 1; // Hack
@@ -88,8 +108,9 @@ namespace cathode_rt
                     $"of function \"{fnName}\": {ex.Message}");
             }
 
+            ZZObject returnValue = ctx.LastReturnValue;
             ctx.Dispose();
-            return ctx.LastReturnValue;
+            return returnValue;
         }
     }
 }

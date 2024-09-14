@@ -13,16 +13,14 @@ namespace cathode_rt
         public static ZZVoid Print(ZZString str)
         {
             Console.Write(str.ToString());
-
-            return null;
+            return ZZVoid.Void;
         }
 
         [ZZFunction("conio", "PrintLn")]
         public static ZZVoid PrintLn(ZZString str)
         {
             Console.WriteLine(str.ToString());
-
-            return null;
+            return ZZVoid.Void;
         }
 
         [ZZFunction("conio", "ReadLn")]
