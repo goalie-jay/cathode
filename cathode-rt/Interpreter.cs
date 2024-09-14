@@ -1351,7 +1351,8 @@ namespace cathode_rt
                                     // Be careful not to overwrite the special values
                                     if (ReferenceEquals(intVar, ZZInteger.Zero) || ReferenceEquals(intVar,
                                         ZZInteger.One) || ReferenceEquals(intVar, ZZInteger.NegativeOne))
-                                        Context.Variables[name] = new ZZInteger(intVar.Value + 1);
+                                        Context.Variables[name] = new ZZInteger(intVar.Value + 
+                                            ((ZZInteger)constToken.Value).Value);
                                     else
                                         intVar.Value += ((ZZInteger)constToken.Value).Value;
                                 }
