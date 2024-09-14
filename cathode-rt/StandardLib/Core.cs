@@ -188,6 +188,20 @@ namespace cathode_rt
             return new ZZStruct();
         }
 
+        [ZZFunction("core", "CloneStruct")]
+        public static ZZStruct CloneStruct(ZZStruct other)
+        {
+            ZZStruct strct = BlankStruct();
+
+            foreach (ZZString fieldName in other.Fields.Keys)
+            {
+                ZZObject obj = other.Fields[fieldName];
+                strct.Fields.Add(fieldName, other.Fields[fieldName]);
+            }
+
+            return strct;
+        }
+
         [ZZFunction("core", "Assert")]
         public static ZZVoid Assert(ZZInteger test, ZZString failureMsg)
         {

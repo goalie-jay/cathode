@@ -134,7 +134,7 @@ namespace cathode_rt
             HotFunctions = new Dictionary<string, System.Reflection.MethodInfo>();
 
             if (main)
-                LastReturnValue = new ZZInteger(0);
+                LastReturnValue = ZZInteger.Zero;
             else
                 LastReturnValue = ZZVoid.Void;
 

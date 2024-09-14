@@ -646,16 +646,19 @@ namespace cathode_rt
             {
                 return EvaluateExpr((ZZObject)methodInf.Invoke(null, parameters.ToArray()));
             }
-            catch (ArgumentException)
-            {
-                throw new InterpreterRuntimeException("Tried to supply either an incorrect amount of parameters " +
-                    "or parameters with incorrect types to a standard function. " +
-                    "Are you calling the correct function? Did you forget " +
-                    "a type conversion?");
-            }
             catch (InterpreterRuntimeException)
             {
                 throw;
+            }
+            catch (Exception ex)
+            {
+                if (ex is ArgumentException || ex is System.Reflection.TargetParameterCountException)
+                    throw new InterpreterRuntimeException("Tried to supply either an incorrect amount of parameters " +
+                        "or parameters with incorrect types to a standard function. " +
+                        "Are you calling the correct function? Did you forget " +
+                        "a type conversion?");
+                else
+                    throw;
             }
         }
 

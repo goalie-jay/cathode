@@ -32,14 +32,15 @@ A dynamically-typed, interpreted programming language that believes in using fun
 *	Keywords and operators are lowercase
 *	Standard library functions are PascalCase, with an optional lowercase single-character prefix to indicate the specialty of the function
 *	Variables are recommended to be PascalCase or camelCase
+*	Spaces on the inside (but not the outside) of parentheses are encouraged but not required, e.g.: PrintLn( Format ( "$0 are $1!", { "Format strings, "cool" } ) )
 
 ```
 namespace OurNamespace ; this is for determining the namespace for files designed to be imported. It is ignored in the main file
 
-import("conio") ; import is used like a function, but it is viewed as a keyword and is lowercase
-dim ourStruct = Struct() ; dim is a keyword for dimensioning variables
+import( "conio" ) ; import is used like a function, but it is viewed as a keyword and is lowercase
+dim ourStruct = Struct( ) ; dim is a keyword for dimensioning variables
 
-PrintLn(typeof(ourStruct)) ; outputs "struct". typeof is also a keyword used like a function
+PrintLn( typeof( ourStruct ) ) ; outputs "struct". typeof is also a keyword used like a function
 
 ```
 
@@ -55,35 +56,35 @@ fnret
 
 ```
 ; Import console I/O namespace
-import("conio")
+import( "conio" )
 
 ; Add two numbers together
 dim x = 5 + 3
-PrintLn(x)
+PrintLn( x )
 ```
 
 ### Function Definition
 
 ```
 fndef PrintNameAndAge accepts name, age
-	import("conio")
-	PrintLn(Format("$0 is $1 years old!", { name, age }))
+	import( "conio" )
+	PrintLn( Format( "$0 is $1 years old!", { name, age } ) )
 fnret
 
-PrintNameAndAge("John", 27)
+PrintNameAndAge( "John", 27 )
 ```
 
 ### Struct Use 
 
 ```
 fndef CreateStruct
-	Dim ourStruct = Struct()
+	Dim ourStruct = Struct( )
 	
 	; Struct fields are created upon their use if they do not already exist
 	ourStruct.Numbers = { 13, 29, 42, 86 }
 fnret
 
-Dim result = CreateStruct()
-import("conio")
-PrintLn(result.Numbers)
+Dim result = CreateStruct( )
+import( "conio" )
+PrintLn( result.Numbers )
 ```

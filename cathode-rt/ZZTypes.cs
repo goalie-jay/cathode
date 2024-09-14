@@ -44,6 +44,8 @@ namespace cathode_rt
 
     public class ZZString : ZZObject
     {
+        public static readonly ZZString EmptyStr = new ZZString();
+
         public override ZZObjectType ObjectType => ZZObjectType.STRING;
 
         public string Contents;
@@ -53,6 +55,11 @@ namespace cathode_rt
         public ZZString(string str)
         {
             Contents = new string(str);
+        }
+
+        private ZZString()
+        {
+            Contents = string.Empty;
         }
 
         public override ZZString GetInLanguageTypeName()
@@ -213,6 +220,10 @@ namespace cathode_rt
 
     public class ZZInteger : ZZObject
     {
+        public static readonly ZZInteger Zero = new ZZInteger(0);
+        public static readonly ZZInteger One = new ZZInteger(1);
+        public static readonly ZZInteger NegativeOne = new ZZInteger(-1);
+
         public override ZZObjectType ObjectType => ZZObjectType.INTEGER;
 
         public long Value;
@@ -239,6 +250,16 @@ namespace cathode_rt
 
         public static implicit operator ZZInteger(long v)
         {
+            switch (v)
+            {
+                case 1:
+                    return One;
+                case 0:
+                    return Zero;
+                case -1:
+                    return NegativeOne;
+            }
+
             return new ZZInteger(v);
         }
 
@@ -534,8 +555,13 @@ namespace cathode_rt
 
         public ZZArray(ZZObject[] objects)
         {
-            Objects = new ZZObject[objects.Length];
-            Array.Copy(objects, 0, Objects, 0, objects.Length);
+            if (objects.Length < 1)
+                Objects = Array.Empty<ZZObject>();
+            else
+            {
+                Objects = new ZZObject[objects.Length];
+                Array.Copy(objects, 0, Objects, 0, objects.Length);
+            }
         }
 
         public override ZZString ToInLanguageString()

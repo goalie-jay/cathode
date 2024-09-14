@@ -6,6 +6,7 @@
 *	[system](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION-SYSTEM.md)
 *	[conio](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION-CONIO.md)
 *	[fileio](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION-FILEIO.md)
+*	[array](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION-ARRAY.md)
 
 ## Data types
 

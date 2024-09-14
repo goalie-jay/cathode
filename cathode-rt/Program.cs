@@ -51,7 +51,7 @@ namespace cathode_rt
 
                 StreamReader sr = new StreamReader(filename);
 
-                ExecutingFile = filename;
+                ExecutingFile = Path.GetFullPath(filename);
 
                 string[] includedFiles;
 

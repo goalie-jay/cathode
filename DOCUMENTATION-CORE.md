@@ -77,6 +77,12 @@
 *	Arguments: None
 *	Returns: struct
 *	Description: Returns a new empty struct
+
+#### CloneStruct(other)
+
+*	Arguments: other (struct)
+*	Returns: struct
+*	Description: Clones a struct and returns the new, identical struct
 	
 #### Assert(test, failureMsg)
 
