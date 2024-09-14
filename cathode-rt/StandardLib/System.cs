@@ -35,6 +35,23 @@ namespace cathode_rt
             return ZZVoid.Void;
         }
 
+        [ZZFunction("system", "Env")]
+        public static ZZObject GetEnv(ZZString name)
+        {
+            string env = null;
+
+            try
+            {
+                env = Environment.GetEnvironmentVariable(name.Contents);
+
+                if (env == null)
+                    return ZZVoid.Void;
+            }
+            catch { return ZZVoid.Void; }
+
+            return (ZZString)env;
+        }
+
         //[ZZFunction("system", "importnative")]
         //public static ZZLongPointer ImportNative(string libName)
         //{

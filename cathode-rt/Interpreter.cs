@@ -31,6 +31,7 @@ namespace cathode_rt
         PERIOD,
         EQUALS,
         VARIABLE_DEFINITION,
+        EXCLAMATIONEQUALS,
         EQUALSEQUALS,
         DOUBLEAMPERSAND,
         DOUBLEPIPE,
@@ -400,6 +401,20 @@ namespace cathode_rt
                 {
                     ++Position;
                     return new Token(TokenType.EQUALSEQUALS, (ZZString)"==");
+                }
+
+                Position = posBackup;
+            }
+
+            // !=
+            if (CurrentChar == '!')
+            {
+                int posBackup = Position;
+                ++Position;
+                if (Position < Text.Length && CurrentChar == '=')
+                {
+                    ++Position;
+                    return new Token(TokenType.EXCLAMATIONEQUALS, (ZZString)"!=");
                 }
 
                 Position = posBackup;
@@ -959,6 +974,15 @@ namespace cathode_rt
             return ImplMethods.Compare(value, evalResult);
         }
 
+        private ZZObject EvaluateInequalityCheckExpr(ZZObject value)
+        {
+            Consume(TokenType.EXCLAMATIONEQUALS);
+
+            ZZObject evalResult = Evaluate();
+
+            return ImplMethods.Negate(ImplMethods.Compare(value, evalResult));
+        }
+
         private ZZObject EvaluateLogicalAndExpr(ZZObject value)
         {
             if (value.ObjectType != ZZObjectType.INTEGER)
@@ -997,6 +1021,9 @@ namespace cathode_rt
 
             if (MatchDoNotConsume(TokenType.EQUALSEQUALS))
                 return EvaluateEqualityCheckExpr(value);
+
+            if (MatchDoNotConsume(TokenType.EXCLAMATIONEQUALS))
+                return EvaluateInequalityCheckExpr(value);
 
             if (MatchDoNotConsume(TokenType.DOUBLEAMPERSAND))
                 return EvaluateLogicalAndExpr(value);

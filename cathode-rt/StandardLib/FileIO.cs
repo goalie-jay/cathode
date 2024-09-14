@@ -9,6 +9,55 @@ namespace cathode_rt
 {
     public static partial class ImplMethods
     {
+        [ZZFunction("fileio", "Getcwd")]
+        public static ZZString GetCwd()
+        {
+            return Directory.GetCurrentDirectory();
+        }
+
+        [ZZFunction("fileio", "Chdir")]
+        public static ZZInteger ChangeDir(ZZString name)
+        {
+            try
+            {
+                Directory.SetCurrentDirectory(name.Contents);
+                return 1;
+            }
+            catch { return 0; }
+        }
+
+        [ZZFunction("fileio", "dEnumDirectories")]
+        public static ZZObject DirectoryEnumDirectories(ZZString name)
+        {
+            try
+            {
+                string[] dirs = Directory.GetDirectories(name.Contents);
+
+                List<ZZString> arr = new List<ZZString>();
+                for (int i = 0; i < dirs.Length; ++i)
+                    arr.Add(dirs[i]);
+
+                return new ZZArray(arr.ToArray());
+            }
+            catch { return ZZVoid.Void; }
+        }
+
+        [ZZFunction("fileio", "dEnumFiles")]
+        public static ZZObject DirectoryEnumFiles(ZZString name)
+        {
+            try
+            {
+                string[] files = Directory.GetFiles(name.Contents);
+
+                List<ZZString> arr = new List<ZZString>();
+                for (int i = 0; i < files.Length; ++i)
+                    arr.Add(files[i]);
+
+                return new ZZArray(arr.ToArray());
+            }
+            catch { return ZZVoid.Void; }
+        }
+
         [ZZFunction("fileio", "dExists")]
         public static ZZInteger DirectoryExists(ZZString dirName)
         {

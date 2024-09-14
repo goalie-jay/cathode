@@ -2,19 +2,21 @@
 
 ## Namespace "conio"
 
-### Print(str)
+### Functions
+
+#### Print(str)
 
 *	Arguments: str (string)
 *	Returns: void
 *	Description: Prints the given string to the console
 
-### PrintLn(str)
+#### PrintLn(str)
 
 *	Arguments: str (string)
 *	Returns: void
 *	Description: Prints the given string to the console
 
-### ReadLn()
+#### ReadLn()
 
 *	Arguments: none
 *	Returns: string
