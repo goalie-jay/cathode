@@ -19,13 +19,21 @@
 
 ## Operators
 
-### typeof(obj)
+### Important Note
+
+Expressions are evaluated from right to left. Keep that in mind when writing expressions.
+
+### typeof( obj )
 
 *	Returns the type of that object at the time of calling
 	
-### import(str)
+### import( str )
 
 *	Imports the given namespace
+
+### ( expr )
+
+*	Isolates the given expression, useful for ensuring expressions are evaluated in the correct order
 
 ### !
 
@@ -48,3 +56,25 @@
 
 *	Produces a nonzero value if either of the expressions on both sides evaluate to true. Otherwise, zero is returned
 *	The expressions on both sides are always evaluated
+
+#### <
+
+*	Produces a nonzero value if the expression on the left side is less than the expression on the right side. Otherwise, zero is returned
+
+#### >
+
+*	Produces a nonzero value if the expression on the left side is greater than the expression on the right side. Otherwise, zero is returned
+
+#### ==
+
+*	Produces a nonzero value if the expression on the left side is equal to the expression on the right side. Otherwise, zero is returned
+
+#### !=
+
+*	Produces a nonzero value if the expression on the left side is not equal to the expression on the right side. Otherwise, zero is returned
+
+#### inc ( identifier, increment )
+
+*	Increments the given identifier by a constant increment. The identifier must be a single variable, and the increment must be constant (that's what makes it fast)
+*	If you're doing a loop where increments are constant and speed is a necessity, this is the fastest way to increment your index variable
+*	This is really only a useful optimization if you're looping thousands of times
