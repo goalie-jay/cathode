@@ -20,20 +20,30 @@
 
 ### typeof(obj)
 
-* Returns the type of that object at the time of calling
+*	Returns the type of that object at the time of calling
 	
 ### import(str)
 
-* Imports the given namespace
+*	Imports the given namespace
 
 ### !
 
-* Inverts the logical expression in front of it
+*	Inverts the logical expression in front of it
 
 ### -(value)
 
-* Flips the sign of the number type inside the parentheses
+*	Flips the sign of the number type inside the parentheses
 
 ### [] (array[index])
 
-* Produces the value at the given index of the array to be used in an expression
+*	Produces the value at the given index of the array to be used in an expression
+
+### &&
+
+*	Produces a nonzero value if the expressions on both sides evaluate to true. Otheriwse, zero is returned
+*	The expressions on both sides are always evaluated
+
+### ||
+
+*	Produces a nonzero value if either of the expressions on both sides evaluate to true. Otherwise, zero is returned
+*	The expressions on both sides are always evaluated

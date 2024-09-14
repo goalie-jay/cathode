@@ -32,6 +32,8 @@ namespace cathode_rt
         EQUALS,
         VARIABLE_DEFINITION,
         EQUALSEQUALS,
+        DOUBLEAMPERSAND,
+        DOUBLEPIPE,
         IF,
         ELSE,
         THEN,
@@ -366,6 +368,48 @@ namespace cathode_rt
                 Position = posBackup;
             }
 
+            // ==
+            if (CurrentChar == '=')
+            {
+                int posBackup = Position;
+                ++Position;
+                if (Position < Text.Length && CurrentChar == '=')
+                {
+                    ++Position;
+                    return new Token(TokenType.EQUALSEQUALS, (ZZString)"==");
+                }
+
+                Position = posBackup;
+            }
+
+            // ||
+            if (CurrentChar == '|')
+            {
+                int posBackup = Position;
+                ++Position;
+                if (Position < Text.Length && CurrentChar == '|')
+                {
+                    ++Position;
+                    return new Token(TokenType.DOUBLEPIPE, (ZZString)"||");
+                }
+
+                Position = posBackup;
+            }
+
+            // &&
+            if (CurrentChar == '&')
+            {
+                int posBackup = Position;
+                ++Position;
+                if (Position < Text.Length && CurrentChar == '&')
+                {
+                    ++Position;
+                    return new Token(TokenType.DOUBLEAMPERSAND, (ZZString)"&&");
+                }
+
+                Position = posBackup;
+            }
+
             if (char.IsDigit(CurrentChar))
             {
                 int constant = 0;
@@ -585,6 +629,10 @@ namespace cathode_rt
                     "or parameters with incorrect types to a standard function. " +
                     "Are you calling the correct function? Did you forget " +
                     "a type conversion?");
+            }
+            catch (InterpreterRuntimeException)
+            {
+                throw;
             }
         }
 
@@ -865,11 +913,59 @@ namespace cathode_rt
             return EvaluateExpr(EvaluateVariableRetrievalExpr(identifier));
         }
 
+        private ZZObject EvaluateEqualityCheckExpr(ZZObject value)
+        {
+            Consume(TokenType.EQUALSEQUALS);
+
+            ZZObject evalResult = Evaluate();
+
+            return ImplMethods.Compare(value, evalResult);
+        }
+
+        private ZZObject EvaluateLogicalAndExpr(ZZObject value)
+        {
+            if (!(value is ZZInteger))
+                throw new InterpreterRuntimeException("Tried to use non-integer for left side of logical and expression.");
+
+            Consume(TokenType.DOUBLEAMPERSAND);
+
+            ZZObject evalResult = Evaluate();
+
+            if (!(evalResult is ZZInteger))
+                throw new InterpreterRuntimeException("Tried to use non-integer for right side of logical and expression.");
+
+            return ImplMethods.Both((ZZInteger)value, (ZZInteger)evalResult);
+        }
+
+        private ZZObject EvaluateLogicalOrExpr(ZZObject value)
+        {
+            if (!(value is ZZInteger))
+                throw new InterpreterRuntimeException("Tried to use non-integer for left side of logical or expression.");
+
+            Consume(TokenType.DOUBLEPIPE);
+
+            ZZObject evalResult = Evaluate();
+
+            if (!(evalResult is ZZInteger))
+                throw new InterpreterRuntimeException("Tried to use non-integer for right side of logical or expression.");
+
+            return ImplMethods.Either((ZZInteger)value, (ZZInteger)evalResult);
+        }
+
         private ZZObject EvaluateExpr(ZZObject value)
         {
             if ((value is ZZInteger || value is ZZFloat) &&
                 MatchDoNotConsume(TokenType.PLUS, TokenType.MINUS, TokenType.ASTERISK, TokenType.BACKSLASH))
                 return EvaluateBinaryExpr(value);
+
+            if (MatchDoNotConsume(TokenType.EQUALSEQUALS))
+                return EvaluateEqualityCheckExpr(value);
+
+            if (MatchDoNotConsume(TokenType.DOUBLEAMPERSAND))
+                return EvaluateLogicalAndExpr(value);
+
+            if (MatchDoNotConsume(TokenType.DOUBLEPIPE))
+                return EvaluateLogicalOrExpr(value);
 
             switch (CurrentToken.TokenType)
             {
