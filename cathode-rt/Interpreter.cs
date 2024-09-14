@@ -908,6 +908,44 @@ namespace cathode_rt
             return val;
         }
 
+        private ZZObject EvaluateStringAccessorExpr(ZZString str)
+        {
+            Consume(TokenType.LEFTBRACKET);
+
+            ZZObject accessor = Evaluate();
+
+            if (accessor.ObjectType != ZZObjectType.INTEGER)
+                throw new InterpreterRuntimeException("Tried to use a non-integer value to index a string.");
+
+            Consume(TokenType.RIGHTBRACKET);
+
+            ZZInteger intAccess = (ZZInteger)accessor;
+            if (intAccess.Value >= str.Contents.Length)
+                throw new InterpreterRuntimeException("String index was out of bounds.");
+
+            if (CurrentToken.TokenType == TokenType.EQUALS)
+            {
+                Consume(TokenType.EQUALS);
+                ZZObject rhs = Evaluate();
+
+                if (rhs.ObjectType != ZZObjectType.STRING)
+                    throw new InterpreterRuntimeException("Tried to assign non-string to string position.");
+
+                ZZString strRhs = (ZZString)rhs;
+
+                if (strRhs.Contents.Length != 1)
+                    throw new InterpreterRuntimeException("Tried to assign string with a length different than one character to a string position.");
+
+                char[] strContentsMutable = str.Contents.ToArray();
+                strContentsMutable[intAccess.Value] = strRhs.Contents[0];
+                str.Contents = new string(strContentsMutable);
+
+                return strRhs;
+            }
+
+            return EvaluateExpr(new ZZString(str.Contents.ToArray()[intAccess.Value].ToString()));
+        }
+
         private ZZObject EvaluateArrayAccessorExpr(ZZArray arr)
         {
             Consume(TokenType.LEFTBRACKET);
@@ -919,6 +957,9 @@ namespace cathode_rt
 
             Consume(TokenType.RIGHTBRACKET);
 
+            if (((ZZInteger)accessor).Value >= arr.Objects.Length || ((ZZInteger)accessor).Value < 0)
+                throw new InterpreterRuntimeException("Array index was out of bounds.");
+
             if (CurrentToken.TokenType == TokenType.EQUALS)
             {
                 Consume(TokenType.EQUALS);
@@ -927,9 +968,6 @@ namespace cathode_rt
                 arr.Objects[((ZZInteger)accessor).Value] = rhs;
                 return rhs;
             }
-
-            if (((ZZInteger)accessor).Value >= arr.Objects.Length || ((ZZInteger)accessor).Value < 0)
-                throw new InterpreterRuntimeException("Array index was out of bounds.");
 
             return EvaluateExpr(arr.Objects[((ZZInteger)accessor).Value]);
         }
@@ -1027,17 +1065,35 @@ namespace cathode_rt
 
         private ZZObject EvaluateLogicalOrExpr(ZZObject value)
         {
-            if (value.ObjectType == ZZObjectType.INTEGER)
+            if (value.ObjectType != ZZObjectType.INTEGER)
                 throw new InterpreterRuntimeException("Tried to use non-integer for left side of logical or expression.");
 
             Consume(TokenType.DOUBLEPIPE);
 
             ZZObject evalResult = Evaluate();
 
-            if (evalResult.ObjectType == ZZObjectType.INTEGER)
+            if (evalResult.ObjectType != ZZObjectType.INTEGER)
                 throw new InterpreterRuntimeException("Tried to use non-integer for right side of logical or expression.");
 
             return ImplMethods.Either((ZZInteger)value, (ZZInteger)evalResult);
+        }
+
+        private ZZObject EvaluateLessThanExpr(ZZObject value)
+        {
+            Consume(TokenType.LESSTHAN);
+
+            ZZObject evalResult = Evaluate();
+
+            return ImplMethods.LessThan(value, evalResult);
+        }
+
+        private ZZObject EvaluateGreaterThanExpr(ZZObject value)
+        {
+            Consume(TokenType.GREATERTHAN);
+
+            ZZObject evalResult = Evaluate();
+
+            return ImplMethods.GreaterThan(value, evalResult);
         }
 
         private ZZObject EvaluateExpr(ZZObject value)
@@ -1052,6 +1108,12 @@ namespace cathode_rt
             if (MatchDoNotConsume(TokenType.EXCLAMATIONEQUALS))
                 return EvaluateInequalityCheckExpr(value);
 
+            if (MatchDoNotConsume(TokenType.LESSTHAN))
+                return EvaluateLessThanExpr(value);
+
+            if (MatchDoNotConsume(TokenType.GREATERTHAN))
+                return EvaluateGreaterThanExpr(value);
+
             if (MatchDoNotConsume(TokenType.DOUBLEAMPERSAND))
                 return EvaluateLogicalAndExpr(value);
 
@@ -1063,6 +1125,8 @@ namespace cathode_rt
                 case TokenType.LEFTBRACKET:
                     if (value.ObjectType == ZZObjectType.ARRAY)
                         return EvaluateArrayAccessorExpr((ZZArray)value);
+                    else if (value.ObjectType == ZZObjectType.STRING)
+                        return EvaluateStringAccessorExpr((ZZString)value);
                     else
                         throw new InterpreterRuntimeException("Tried to access a non-array with an array accessor.");
                 case TokenType.PERIOD:
@@ -1203,7 +1267,7 @@ namespace cathode_rt
                         ZZObject evalResult = Evaluate();
                         Consume(TokenType.RIGHTPARENTHESIS);
 
-                        return evalResult;
+                        return EvaluateExpr(evalResult);
                     }
 
                 case TokenType.EXCLAMATION:

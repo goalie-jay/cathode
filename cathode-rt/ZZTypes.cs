@@ -45,8 +45,6 @@ namespace cathode_rt
 
     public class ZZString : ZZObject
     {
-        public static readonly ZZString EmptyStr = new ZZString();
-
         public override ZZObjectType ObjectType => ZZObjectType.STRING;
 
         public string Contents;

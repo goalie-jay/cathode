@@ -12,6 +12,18 @@
 *	Returns: struct
 *	Description: Returns a struct containing information about the interpreter and the operating system in the format { ExecutingFile (string, location of the currently executing program), ProcessId (integer), NameOfUser (string), NameOfMachine (string), X64 (integer), InterpreterInfo (struct) { MajorVersionNumber (integer), MinorVersionNumber (integer), IncrementVersionNumber (integer) } }
 
+#### RandomInt()
+
+*	Arguments: none
+*	Returns: integer
+*	Description: Returns a random integer
+
+#### RandomFloat()
+
+*	Arguments: none
+*	Returns: float
+*	Description: Returns a random float
+
 #### RandomBytes(length)
 
 *	Arguments: length (integer)
@@ -82,7 +94,19 @@
 
 *	Arguments: other (struct)
 *	Returns: struct
-*	Description: Clones a struct and returns the new, identical struct
+*	Description: Returns a new struct identical to the given struct
+
+#### CloneString(other)
+
+*	Arguments: other (string)
+*	Returns: string
+*	Description: Returns a new string identical to the given string
+
+#### CloneArray(other)
+
+*	Arguments: other (array)
+*	Returns: array
+*	Description: Returns a new array identical to the given array
 	
 #### Assert(test, failureMsg)
 

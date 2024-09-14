@@ -30,6 +30,18 @@ namespace cathode_rt
             return strct;
         }
 
+        [ZZFunction("core", "RandomInt")]
+        public static ZZInteger RandomInt()
+        {
+            return RandomNumberGen.GetRandomInt();
+        }
+
+        [ZZFunction("core", "RandomFloat")]
+        public static ZZFloat RandomFloat()
+        {
+            return RandomNumberGen.GetRandomFloat();
+        }
+
         [ZZFunction("core", "RandomBytes")]
         public static ZZArray RandomBytes(ZZInteger length)
         {
@@ -200,6 +212,23 @@ namespace cathode_rt
             }
 
             return strct;
+        }
+
+        [ZZFunction("core", "CloneString")]
+        public static ZZString CloneString(ZZString other)
+        {
+            return new ZZString(other.Contents);
+        }
+
+        [ZZFunction("core", "CloneArray")]
+        public static ZZArray CloneArray(ZZArray other)
+        {
+            List<ZZObject> objs = new List<ZZObject>();
+
+            foreach (ZZObject obj in other.Objects)
+                objs.Add(obj);
+
+            return new ZZArray(objs.ToArray());
         }
 
         [ZZFunction("core", "Assert")]

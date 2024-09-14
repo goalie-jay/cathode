@@ -10,6 +10,20 @@ namespace cathode_rt
     {
         private static Random random = new Random(Environment.TickCount);
 
+        public static ZZInteger GetRandomInt()
+        {
+            // Ints are actually longs
+            byte[] longBytes = GetRandomBytes(sizeof(long));
+            return (ZZInteger)BitConverter.ToInt64(longBytes);
+        }
+
+        public static ZZFloat GetRandomFloat()
+        {
+            // Floats are actually doubles
+            byte[] longBytes = GetRandomBytes(sizeof(double));
+            return (ZZFloat)BitConverter.ToDouble(longBytes);
+        }
+
         public static byte[] GetRandomBytes(int count)
         {
             byte[] data = new byte[count];
