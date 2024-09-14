@@ -411,7 +411,9 @@ namespace cathode_rt
 
     public class ZZVoid : ZZObject
     {
-        public ZZVoid() { }
+        public static readonly ZZVoid Void = new ZZVoid();
+
+        private ZZVoid() { }
 
         public override ZZString GetInLanguageTypeName()
         {

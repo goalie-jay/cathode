@@ -108,7 +108,7 @@ namespace cathode_rt
             if (main)
                 LastReturnValue = new ZZInteger(0);
             else
-                LastReturnValue = new ZZVoid();
+                LastReturnValue = ZZVoid.Void;
 
             HasReturned = false;
             ReturnWhile = false;

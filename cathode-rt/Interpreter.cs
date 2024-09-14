@@ -304,7 +304,7 @@ namespace cathode_rt
                         {
                             ++Position;
                             if (Position >= Text.Length || !char.IsLetterOrDigit(CurrentChar))
-                                return new Token(TokenType.VOID, (ZZString)"void");
+                                return new Token(TokenType.VOID, ZZVoid.Void);
                         }
                     }
                 }
@@ -702,7 +702,7 @@ namespace cathode_rt
             if (Context.Variables.ContainsKey(((ZZString)id.Value).ToString()))
                 throw new InterpreterRuntimeException("Tried to dimension variable that already existed.");
 
-            Context.Variables.Add(((ZZString)id.Value).ToString(), new ZZVoid());
+            Context.Variables.Add(((ZZString)id.Value).ToString(), ZZVoid.Void);
 
             if (CurrentToken.TokenType == TokenType.EQUALS)
             {
@@ -745,7 +745,7 @@ namespace cathode_rt
             Consume(TokenType.RIGHTPARENTHESIS);
 
             Context.ComparisonStack.Push(integerComparison); // Push the comparison value onto the stack
-            return new ZZVoid();
+            return ZZVoid.Void;
         }
 
         private ZZVoid EvaluateWhileExpr()
@@ -769,7 +769,7 @@ namespace cathode_rt
             else
                 Context.WhileSkipStack.Push(1);
 
-            return new ZZVoid();
+            return ZZVoid.Void;
         }
 
         private ZZVoid EvaluatePostExpr()
@@ -778,7 +778,7 @@ namespace cathode_rt
             ZZObject postVal = Evaluate();
 
             Context.LastReturnValue = postVal;
-            return new ZZVoid();
+            return ZZVoid.Void;
         }
 
         private ZZVoid EvaluateRetExpr()
@@ -793,7 +793,7 @@ namespace cathode_rt
             }
 
             Context.HasReturned = true;
-            return new ZZVoid();
+            return ZZVoid.Void;
         }
 
         private ZZArray EvaluateArrayExpr()
@@ -1010,7 +1010,7 @@ namespace cathode_rt
                         Context.IfSkipStack.Push(1);
 
                     if (CurrentToken.TokenType != TokenType.ELSE)
-                        return new ZZVoid();
+                        return ZZVoid.Void;
                 }
                 else if (CurrentToken.TokenType == TokenType.THEN)
                 {
@@ -1018,13 +1018,13 @@ namespace cathode_rt
 
                     Context.ComparisonStack.Pop(); // Successful if block complete, pop comparison
 
-                    return new ZZVoid();
+                    return ZZVoid.Void;
                 }
                 
                 if (CurrentToken.TokenType == TokenType.ELSE)
                 {
                     if (Context.IfSkipStack.Count > 0)
-                        return new ZZVoid();
+                        return ZZVoid.Void;
                     else
                     {
                         Consume(TokenType.ELSE);
@@ -1032,7 +1032,7 @@ namespace cathode_rt
                         // Push the inverse comparison onto the comparison stack
                         Context.ComparisonStack.Push(ImplMethods.Negate(Context.ComparisonStack.Pop()));
 
-                        return new ZZVoid();
+                        return ZZVoid.Void;
                     }
                 }
             }
@@ -1050,7 +1050,7 @@ namespace cathode_rt
                     Context.WhileSkipStack.Pop();
                 }
 
-                return new ZZVoid();
+                return ZZVoid.Void;
             }
 
             switch (CurrentToken.TokenType)
@@ -1063,7 +1063,7 @@ namespace cathode_rt
                         throw new InterpreterRuntimeException("Tried to use loop as part of another expression.");
 
                     Context.ReturnWhile = true;
-                    return new ZZVoid();
+                    return ZZVoid.Void;
 
                 case TokenType.WHILE:
                     if (EvaluationStackDepth != 1)
@@ -1092,10 +1092,6 @@ namespace cathode_rt
                         throw new InterpreterRuntimeException("Tried to use ret as part of another expression.");
                     else
                         return EvaluateRetExpr();
-
-                case TokenType.VOID:
-                    Consume(TokenType.VOID);
-                    return new ZZVoid();
 
                 case TokenType.LEFTCURLYBRACKET:
                     return EvaluateArrayExpr();
@@ -1141,6 +1137,7 @@ namespace cathode_rt
                 case TokenType.IDENTIFIER:
                     return EvaluateIdentifierExpr();
 
+                case TokenType.VOID:
                 case TokenType.STRING_CONSTANT:
                 case TokenType.INTEGER_CONSTANT:
                 case TokenType.FLOAT_CONSTANT:
@@ -1153,7 +1150,7 @@ namespace cathode_rt
                     return EvaluateVariableDimensionExpr();
 
                 case TokenType.EOL:
-                    return new ZZVoid();
+                    return ZZVoid.Void;
                 default:
                     throw new Exception();
             }

@@ -78,14 +78,14 @@ namespace cathode_rt
                         _perms = FileAccess.Write;
                         break;
                     default:
-                        return new ZZVoid();
+                        return ZZVoid.Void;
                 }
 
                 stream = File.Open(name.ToString(), _mode, _perms);
             }
             catch { }
 
-            return new ZZVoid();
+            return ZZVoid.Void;
         }
         [ZZFunction("fileio", "fExists")]
         public static ZZInteger FileExists(ZZString filename)
@@ -101,7 +101,7 @@ namespace cathode_rt
                 FileStream fs = File.Create(filename.Contents);
                 return new ZZFileHandle(fs);
             }
-            catch { return new ZZVoid(); }
+            catch { return ZZVoid.Void; }
         }
 
         [ZZFunction("fileio", "fGetPath")]
@@ -111,14 +111,14 @@ namespace cathode_rt
             {
                 return new ZZString(Path.GetFullPath(filename.Contents));
             }
-            catch { return new ZZVoid(); }
+            catch { return ZZVoid.Void; }
         }
 
         [ZZFunction("fileio", "fClose")]
         public static ZZVoid FileClose(ZZFileHandle handle)
         {
             handle.Stream.Dispose();
-            return new ZZVoid();
+            return ZZVoid.Void;
         }
 
         [ZZFunction("fileio", "fReadLine")]
@@ -140,7 +140,7 @@ namespace cathode_rt
 
                 return new ZZString(new string(vs.ToArray()));
             }
-            catch { return new ZZVoid(); }
+            catch { return ZZVoid.Void; }
         }
 
         [ZZFunction("fileio", "fLen")]
@@ -150,7 +150,7 @@ namespace cathode_rt
             {
                 return new ZZInteger(handle.Stream.Length);
             }
-            catch { return new ZZVoid(); }
+            catch { return ZZVoid.Void; }
         }
 
         [ZZFunction("fileio", "fGetPos")]
@@ -166,7 +166,7 @@ namespace cathode_rt
                 throw new ArgumentException();
 
             handle.Stream.Position = position.Value;
-            return new ZZVoid();
+            return ZZVoid.Void;
         }
 
         [ZZFunction("fileio", "fRead")]
@@ -178,7 +178,7 @@ namespace cathode_rt
             {
                 bytesRead = handle.Stream.Read(arr, 0, count);
             }
-            catch { return new ZZVoid(); }
+            catch { return ZZVoid.Void; }
 
             if (bytesRead == -1)
                 return new ZZArray(new ZZObject[] { });

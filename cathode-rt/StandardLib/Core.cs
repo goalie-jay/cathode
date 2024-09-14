@@ -70,7 +70,7 @@ namespace cathode_rt
                         throw new ArgumentException();
                 }
             }
-            catch { return new ZZVoid(); }
+            catch { return ZZVoid.Void; }
         }
 
         [ZZFunction("core", "StrToBytes")]
@@ -101,7 +101,7 @@ namespace cathode_rt
 
                 return new ZZArray(arrContents.ToArray());
             }
-            catch { return new ZZVoid(); }
+            catch { return ZZVoid.Void; }
         }
 
         [ZZFunction("core", "Arraylen")]
@@ -173,7 +173,7 @@ namespace cathode_rt
             else
                 strct.Fields[name] = obj;
 
-            return new ZZVoid();
+            return ZZVoid.Void;
         }
 
         //[ZZFunction("core", "StructData")]
@@ -194,7 +194,7 @@ namespace cathode_rt
             if (test.Value == 0)
                 ThrowException(failureMsg);
 
-            return new ZZVoid();
+            return ZZVoid.Void;
         }
 
         [ZZFunction("core", "Except")]
@@ -413,7 +413,7 @@ namespace cathode_rt
                 if (int.TryParse(zstr.Contents, out int strParsed))
                     return new ZZInteger(strParsed);
                 else
-                    return new ZZVoid();
+                    return ZZVoid.Void;
 
             if (obj is ZZByte zbyte)
                 return new ZZInteger((int)zbyte.Value);
@@ -440,9 +440,9 @@ namespace cathode_rt
                 if (float.TryParse(zstr.Contents, out float strParsed))
                     return new ZZFloat(strParsed);
                 else
-                    return new ZZVoid();
+                    return ZZVoid.Void;
 
-            return new ZZVoid();
+            return ZZVoid.Void;
         }
 
         [ZZFunction("core", "String")]
@@ -456,7 +456,7 @@ namespace cathode_rt
         {
             Program.CurrentlyExecutingContext.ImportNamespace(ns.ToString());
 
-            return new ZZVoid();
+            return ZZVoid.Void;
         }
 
         [ZZFunction("core", "Strcmp")]

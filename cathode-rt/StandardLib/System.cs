@@ -32,7 +32,7 @@ namespace cathode_rt
 
             System.Threading.Thread.Sleep((int)time.Value);
 
-            return new ZZVoid();
+            return ZZVoid.Void;
         }
 
         //[ZZFunction("system", "importnative")]
