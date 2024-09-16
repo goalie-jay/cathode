@@ -21,6 +21,7 @@ namespace cathode_rt
 
             if (args.Length == 0)
             {
+                CurrentlyExecutingContext = GlobalContext;
                 Console.WriteLine("No source file was supplied; interpreter will run interactively.");
                 string input;
                 while (true)

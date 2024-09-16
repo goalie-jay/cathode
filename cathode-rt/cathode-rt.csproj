@@ -1,13 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <RootNamespace>cathode_rt</RootNamespace>
     <AssemblyName>cathode-rt</AssemblyName>
-	<TieredCompilationQuickJit>false</TieredCompilationQuickJit>
-	<PublishReadyToRun>true</PublishReadyToRun>
-	<PublishSingleFile>true</PublishSingleFile>
 	<RuntimeIdentifier>win-x64</RuntimeIdentifier>
 	<Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
@@ -18,6 +15,10 @@
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <WarningLevel>3</WarningLevel>
+  </PropertyGroup>
+	
+  <PropertyGroup>
+    <PublishAot>true</PublishAot>
   </PropertyGroup>
 
 </Project>

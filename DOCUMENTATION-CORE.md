@@ -201,3 +201,15 @@
 *	Returns: integer
 *	Description: Compared the two supplied strings and returns zero if they are equal. Otherwise, a nonzero value is returned
 *	Additional notes: Be careful using this function in comparisons since it follows the opposite pattern of normal comparison. Remember to compare the result to zero
+
+#### Uppercase(str)
+
+*	Arguments: str (string)
+*	Returns: string
+*	Description: Returns a new string equivalent to the given string in uppercase
+
+#### Lowercase(str)
+
+*	Arguments: str (string)
+*	Returns: string
+*	Description: Returns a new string equivalent to the given string in lowercase

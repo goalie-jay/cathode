@@ -13,6 +13,15 @@ namespace cathode_rt
         DefinedInLanguage
     }
 
+    //public struct IncrementInformation
+    //{
+    //    public const int Increment = 1;
+    //    public int Pointer = 0;
+    //    public long[] Values = Array.Empty<long>();
+
+    //    public IncrementInformation() { }
+    //};
+
     public class ExecutionContext : IDisposable
     {
         public Dictionary<ZZFunctionDescriptor, string[]> FunctionsAndBodies;
@@ -23,6 +32,8 @@ namespace cathode_rt
         public Dictionary<string, System.Reflection.MethodInfo> HotFunctions 
             = new Dictionary<string, System.Reflection.MethodInfo>();
         public ZZObject LastReturnValue;
+        // Used for optimizations involving inc()
+        // public Dictionary<ZZInteger, IncrementInformation> IncrementTable;
 
         public Stack<byte> WhileSkipStack; // Used for the interpreter to know if it should skip a while() loop's
                                            //   body
@@ -102,6 +113,9 @@ namespace cathode_rt
             foreach (string hfName in other.HotFunctions.Keys)
                 nw.HotFunctions.Add(hfName, other.HotFunctions[hfName]);
 
+            //foreach (ZZInteger incVar in other.IncrementTable.Keys)
+            //    nw.IncrementTable.Add(incVar, other.IncrementTable[incVar]);
+
             nw.ImportedNamespaces.AddRange(other.ImportedNamespaces);
             nw.ComparisonStack = new Stack<ZZInteger>(new Stack<ZZInteger>(other.ComparisonStack));
             nw.IfSkipStack = new Stack<ZZInteger>(new Stack<ZZInteger>(other.IfSkipStack));
@@ -131,6 +145,8 @@ namespace cathode_rt
             RequestedWhileLoop = false;
             WhileReturnLines = new Stack<int>();
 
+            // IncrementTable = new Dictionary<ZZInteger, IncrementInformation>();
+
             HotFunctions = new Dictionary<string, System.Reflection.MethodInfo>();
 
             if (main)
@@ -158,6 +174,29 @@ namespace cathode_rt
 
             return null;
         }
+
+        //public long GetIncrementResultUsingTable(ZZInteger obj)
+        //{
+        //    IncrementInformation cInfo = new IncrementInformation();
+
+        //    if (IncrementTable.ContainsKey(obj))
+        //        cInfo = IncrementTable[obj];
+
+        //    if (cInfo.Pointer >= cInfo.Values.Length)
+        //    {
+        //        // Generate more values
+        //        cInfo.Values = new long[100];
+        //        cInfo.Pointer = 0;
+
+        //        for (long i = 0; i < cInfo.Values.Length; ++i)
+        //            cInfo.Values[i] = obj.Value + i + 1;
+        //    }
+
+        //    int ptr = cInfo.Pointer;
+        //    ++cInfo.Pointer;
+
+        //    return cInfo.Values[ptr];
+        //}
 
         public System.Reflection.MethodInfo LookupBuiltInFunction(string name)
         {

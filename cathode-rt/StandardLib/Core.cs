@@ -549,5 +549,17 @@ namespace cathode_rt
 
             return 0;
         }
+
+        [ZZFunction("core", "Uppercase")]
+        public static ZZString Uppercase(ZZString str)
+        {
+            return new ZZString(str.Contents.ToUpper());
+        }
+
+        [ZZFunction("core", "Lowercase")]
+        public static ZZString Lowercase(ZZString str)
+        {
+            return new ZZString(str.Contents.ToLower());
+        }
     }
 }

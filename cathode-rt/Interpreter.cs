@@ -1319,11 +1319,6 @@ namespace cathode_rt
                         Token id = CurrentToken;
                         Consume(TokenType.IDENTIFIER);
 
-                        Consume(TokenType.COMMA);
-
-                        Token constToken = CurrentToken;
-                        ConsumeAny(TokenType.INTEGER_CONSTANT, TokenType.FLOAT_CONSTANT);
-
                         Consume(TokenType.RIGHTPARENTHESIS);
 
                         string name = ((ZZString)id.Value).Contents;
@@ -1340,39 +1335,27 @@ namespace cathode_rt
                         switch (variable.ObjectType)
                         {
                             case ZZObjectType.INTEGER:
+                                // Do this in place, extremely fast
+
+                                ZZInteger intVar = (ZZInteger)variable;
+
+                                // Be careful not to overwrite the special values
+                                switch (intVar.Value)
                                 {
-                                    if (constToken.TokenType != TokenType.INTEGER_CONSTANT)
-                                        throw new InterpreterRuntimeException("Constant argument of inc did not match " +
-                                            "the type of the variable.");
-
-                                    // Do this in place, extremely fast
-                                    ZZInteger intVar = (ZZInteger)variable;
-
-                                    // Be careful not to overwrite the special values
-                                    if (ReferenceEquals(intVar, ZZInteger.Zero) || ReferenceEquals(intVar,
-                                        ZZInteger.One) || ReferenceEquals(intVar, ZZInteger.NegativeOne))
-                                        Context.Variables[name] = new ZZInteger(intVar.Value + 
-                                            ((ZZInteger)constToken.Value).Value);
-                                    else
-                                        intVar.Value += ((ZZInteger)constToken.Value).Value;
+                                    case -1:
+                                    case 0:
+                                    case 1:
+                                        Context.Variables[name] = new ZZInteger(intVar.Value + 1);
+                                        break;
+                                    default:
+                                        // intVar.Value = Context.GetIncrementResultUsingTable(intVar);
+                                        ++intVar.Value;
+                                        break;
                                 }
+
                                 break;
-                            case ZZObjectType.FLOAT:
-                                {
-                                    if (constToken.TokenType != TokenType.FLOAT_CONSTANT)
-                                        throw new InterpreterRuntimeException("Constant argument of inc did not match " +
-                                            "the type of the variable.");
-
-                                    // Do this in place, extremely fast
-                                    ZZFloat floatVar = (ZZFloat)variable;
-
-                                    // Be careful not to overwrite the special values
-                                    floatVar.Value += ((ZZFloat)constToken.Value).Value;
-                                }
-                                break;
-
                             default:
-                                throw new InterpreterRuntimeException("Tried to fast-increment a non-integer, non-floating point value.");
+                                throw new InterpreterRuntimeException("Tried to fast-increment a non-integer.");
                         }
 
                         return variable;
