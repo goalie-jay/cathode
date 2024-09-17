@@ -133,4 +133,4 @@ fnret
 
 ## Bugs
 
-If you find something that doesn't work, *please* let me know and I'll get it fixed as soon as I possibly can
+If you find something that doesn't work, *please* let me know, either through a Discord message or through a GitHub issue, and I'll get it fixed as soon as I possibly can
