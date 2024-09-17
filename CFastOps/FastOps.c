@@ -36,9 +36,18 @@ EXPORT LONGLONG FindFunctionAndLoadLibraryIfNecessary(LPCSTR szLibName, LPCSTR s
     return GetProcAddress(hModule, szProcName);
 }
 
-EXPORT VOID ExecuteNativeFunction(LONGLONG nAddr, LPVOID* lpArgBytesArr, INT* iArgumentTypesArray, INT iArgc, INT iReturnType, LPVOID lpReturnData)
+EXPORT VOID GetRandomBytes(LPVOID lp, LONGLONG count)
 {
-    // I don't even know how to cook this. Here's my best guess
+    static INT seeded = 0;
+
+    if (seeded == 0)
+    {
+        seeded = 1;
+        srand(GetTickCount());
+    }
+
+    for (INT i = 0; i < count; ++i)
+        ((LPBYTE)lp)[i] = (BYTE)rand();
 }
 
 EXPORT INT System(LPCSTR sz)

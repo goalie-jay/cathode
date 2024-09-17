@@ -112,7 +112,7 @@ namespace cathode_rt
             FileStream stream = null;
             try
             {
-                FileMode _mode = FileMode.OpenOrCreate;
+                FileMode _mode = FileMode.Open;
                 FileAccess _perms = FileAccess.Read;
 
                 switch (perms.ToString())
@@ -132,9 +132,9 @@ namespace cathode_rt
 
                 stream = File.Open(name.ToString(), _mode, _perms);
             }
-            catch { }
+            catch { return ZZVoid.Void; }
 
-            return ZZVoid.Void;
+            return new ZZFileHandle(stream);
         }
         [ZZFunction("fileio", "fExists")]
         public static ZZInteger FileExists(ZZString filename)
@@ -170,7 +170,7 @@ namespace cathode_rt
             return ZZVoid.Void;
         }
 
-        [ZZFunction("fileio", "fReadLine")]
+        [ZZFunction("fileio", "fReadLn")]
         public static ZZObject FileReadline(ZZFileHandle handle)
         {
             try
@@ -258,7 +258,7 @@ namespace cathode_rt
             catch { return 0; }
         }
 
-        [ZZFunction("fileio", "fWriteLine")]
+        [ZZFunction("fileio", "fWriteLn")]
         public static ZZInteger FileWriteLine(ZZFileHandle handle, ZZString line, ZZString encoding)
         {
             byte[] data;

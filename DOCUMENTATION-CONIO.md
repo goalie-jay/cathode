@@ -4,6 +4,18 @@
 
 ### Functions
 
+#### Width()
+
+*	Arguments: none
+*	Returns: integer
+*	Description: Gets the console window width
+
+#### Height()
+
+*	Arguments: none
+*	Returns: integer
+*	Description: Gets the console window height
+
 #### Title(str)
 
 *	Arguments: str (string)

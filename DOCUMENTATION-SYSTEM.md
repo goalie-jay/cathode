@@ -21,3 +21,15 @@
 *	Arguments: name (string)
 *	Returns: string, void
 *	Description: Tries to get the value of an environment variable with the given name and returns it if successful. Otherwise, void is returned
+
+#### Ticks()
+
+*	Arguments: none
+*	Returns: integer
+*	Description: Returns the system tick count
+
+#### Time()
+
+*	Arguments: none
+*	Returns: struct
+*	Description: Returns a struct of format { Day (integer), Month (integer), Year (integer), Time (float, milliseconds), Unix (integer, time since Unix epoch) }

@@ -8,6 +8,18 @@ namespace cathode_rt
 {
     public static partial class ImplMethods
     {
+        [ZZFunction("conio", "cWidth")]
+        public static ZZInteger GetConsoleWidth()
+        {
+            return Console.BufferWidth;
+        }
+
+        [ZZFunction("conio", "cHeight")]
+        public static ZZInteger GetConsoleHeight()
+        {
+            return Console.BufferHeight;
+        }
+
         [ZZFunction("conio", "Title")]
         public static ZZVoid SetConsoleTitle(ZZString str)
         {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,8 +9,6 @@ namespace cathode_rt
 {
     public static class RandomNumberGen
     {
-        private static Random random = new Random(Environment.TickCount);
-
         public static ZZInteger GetRandomInt()
         {
             // Ints are actually longs
@@ -27,7 +26,11 @@ namespace cathode_rt
         public static byte[] GetRandomBytes(int count)
         {
             byte[] data = new byte[count];
-            random.NextBytes(data);
+            unsafe
+            {
+                fixed (byte* ptr = data)
+                    FastOps.GetRandomBytes(ptr, count);
+            }
 
             return data;
         }

@@ -28,10 +28,10 @@ namespace cathode_rt
             }
         }
 
-        public static ZZLongPointer GetNativeFunction(string lib, string fn)
-        {
-            return new ZZLongPointer((nuint)_FindFunctionAndLoadLibraryIfNecessary(lib, fn));
-        }
+        //public static ZZLongPointer GetNativeFunction(string lib, string fn)
+        //{
+        //    return new ZZLongPointer((nuint)_FindFunctionAndLoadLibraryIfNecessary(lib, fn));
+        //}
 
         [DllImport("CFastOps.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LongToString")]
         private static extern unsafe void _LongToString(long* ptr, [MarshalAs(UnmanagedType.LPStr)] StringBuilder result);
@@ -42,9 +42,12 @@ namespace cathode_rt
         [DllImport("CFastOps.dll")]
         public static extern int System([MarshalAs(UnmanagedType.LPStr)] string s);
 
-        [DllImport("CFastOps.dll", EntryPoint = "FindFunctionAndLoadLibraryIfNecessary")]
-        private static extern long _FindFunctionAndLoadLibraryIfNecessary([MarshalAs(UnmanagedType.LPStr)] 
-            string libName, [MarshalAs(UnmanagedType.LPStr)] string procName);
+        //[DllImport("CFastOps.dll", EntryPoint = "FindFunctionAndLoadLibraryIfNecessary")]
+        //private static extern long _FindFunctionAndLoadLibraryIfNecessary([MarshalAs(UnmanagedType.LPStr)] 
+        //    string libName, [MarshalAs(UnmanagedType.LPStr)] string procName);
+
+        [DllImport("CFastOps.dll")]
+        public static unsafe extern void GetRandomBytes(byte* ptr, long count);
 
         [DllImport("CFastOps.dll")]
         public static extern void Setup();

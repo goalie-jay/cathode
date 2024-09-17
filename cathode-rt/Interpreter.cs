@@ -1277,6 +1277,8 @@ namespace cathode_rt
                         ZZObject evalResult = Evaluate();
                         if (evalResult.ObjectType == ZZObjectType.INTEGER)
                             return ImplMethods.Negate((ZZInteger)evalResult);
+                        else if (evalResult.ObjectType == ZZObjectType.FILEHANDLE)
+                            return ImplMethods.Negate((ZZInteger)ImplMethods.ConvertToInteger(evalResult));
                         else
                             throw new InterpreterRuntimeException("Tried to negate a non-integer value.");
                     }

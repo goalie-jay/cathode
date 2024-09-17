@@ -82,7 +82,7 @@
 *	Returns: void
 *	Description: Closes the given handle
 
-#### fReadLine(handle)
+#### fReadLn(handle)
 
 *	Arguments: handle (filehandle)
 *	Returns: void
@@ -118,7 +118,7 @@
 *	Returns: integer
 *	Description: Tries to write the given array of bytes to the file pointed to by the given handle and returns a nonzero value if successful. Otherwise, zero is returned
 
-#### fWriteLine(handle, line, encoding)
+#### fWriteLn(handle, line, encoding)
 
 *	Arguments: handle (filehandle), line (string), encoding (string)
 *	Returns: integer

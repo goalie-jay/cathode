@@ -44,6 +44,27 @@ namespace cathode_rt
             return (ZZString)env;
         }
 
+        [ZZFunction("system", "Ticks")]
+        public static ZZInteger GetTickCount()
+        {
+            return Environment.TickCount64;
+        }
+
+        [ZZFunction("system", "Time")]
+        public static ZZStruct GetDateAndTime()
+        {
+            DateTime now = DateTime.Now;
+
+            ZZStruct strct = new ZZStruct();
+            strct.Fields.Add("Day", new ZZInteger(now.Day));
+            strct.Fields.Add("Month", new ZZInteger(now.Month));
+            strct.Fields.Add("Year", new ZZInteger(now.Year));
+            strct.Fields.Add("Time", new ZZFloat(now.TimeOfDay.TotalMilliseconds));
+            strct.Fields.Add("Unix", new ZZInteger(((DateTimeOffset)now).ToUnixTimeMilliseconds()));
+
+            return strct;
+        }
+
         //[ZZFunction("system", "NativeFunction")]
         //public static ZZLongPointer NativeFunction(ZZString libName, ZZString fnName)
         //{
