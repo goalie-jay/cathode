@@ -2,7 +2,7 @@
 
 # Cathode
 
-A dynamically-typed, interpreted programming language that believes in using functions for most operations
+A dynamically-typed, interpreted programming language
 
 ## Features
 
