@@ -2,7 +2,7 @@
 
 ## Namespace "array"
 
-*	While the array datatype and the ArrayLen() function are available in namespace "core", the "array" namespace provides extended array manipulation functionality
+*	While the array datatype and the Arraylen() function are available in namespace "core", the "array" namespace provides extended array manipulation functionality
 
 ### Functions
 
