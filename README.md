@@ -8,8 +8,7 @@ A dynamically-typed, interpreted programming language
 
 *   **Dynamic typing**: Variables can hold any type of data at any time
 *	**Variable clarity**: While types are dynamic and struct fields can be assigned at will, freestanding variables must be dimensioned to be used, eliminating ambiguity over whether a variable is being created or simply assigned
-*   **Everything is a function**: Operators are rarely used, and functions are favored
-*   **Unique syntax**: Blend elements from various influences for a fun and readable coding experience
+*   **Unique syntax**: Blend elements from various influences for a fun (?) programming experience
 *	**Imports on a functional basis**: Namespaces cannot be accessed by dot notation, and imports are done in each function at runtime. It is impossible to pollute the global namespace
 *	**Return value posting**: Return values of functions can be set without returning, saving boilerplate
 
@@ -17,7 +16,7 @@ A dynamically-typed, interpreted programming language
 
 ### Prerequisites
 
-*   Basically just download and compile the runtime
+*   Basically just download and compile the runtime, or download a release
 
 ### Installing the Language Runtime
 
@@ -127,3 +126,7 @@ fndef Main
 	ReadLn( )
 fnret
 ```
+
+## Bugs
+
+If you find something that doesn't work, *please* let me know and I'll get it fixed as soon as I possibly can
