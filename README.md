@@ -92,3 +92,38 @@ Dim result = CreateStruct( )
 import( "conio" )
 PrintLn( result.Numbers )
 ```
+
+### Reading a File Line-By-Line
+
+```
+fndef Main
+	post 0 ; This sets a default return value of 0
+
+	import( "conio" ) ; Import the PrintLn( ), Print( ), and ReadLn( ) functions
+	import( "fileio" ) ; Import the fOpen( ), fGetPos( ), fLen( ), and fReadLn( ) functions
+
+	Print( "Enter a filename to read it line-by-line: " )
+	dim filename = ReadLn( ) ; Accept filename from stdin
+	
+	dim handle = fOpen( filename, "r" ) ; Open the file with read perms
+	
+	if ( handle == void ) ; Ensure the handle is valid
+		PrintLn( "Failed to open file." )
+		ret 1 ; We have failed, so return an error code
+	then
+	
+	PrintLn( "Press enter after each line to get the next one." )
+	PrintLn( fReadLn( handle ) ) ; Print first line
+	while ( fGetPos( handle ) < fLen( handle ) )
+		Title( Format( "($0%)", { Integer( ( Float( fGetPos( handle ) ) / Float( fLen( handle ) ) ) * Float( 100 ) ) } ) ) ; Set title to percentage read. It's converted back to integer in order to not be an ugly decimal
+		ReadLn( )
+		Print( fReadLn( handle ) )
+	loop
+	PrintLn( "" )
+	
+	fClose( handle ) ; Close our handle
+	Title( "(100%)" )
+	Print( "Done (press enter to quit)." )
+	ReadLn( )
+fnret
+```
