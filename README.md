@@ -28,6 +28,10 @@ To get started, download the latest release from the [releases page](https://git
 
 Documentation is available [here on github](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION.md)
 
+## Discord Server
+
+We're talking in [here](https://discord.gg/MCGKG46J)!
+
 ## Code Examples
 
 ### Preferred Code Style
