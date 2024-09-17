@@ -491,7 +491,7 @@ namespace cathode_rt
                 case ZZObjectType.BYTE:
                     return new ZZInteger(((ZZByte)obj).Value);
                 case ZZObjectType.FILEHANDLE:
-                    return new ZZInteger(((ZZFileHandle)obj).Stream.Handle.ToInt32());
+                    return new ZZInteger(((ZZFileHandle)obj).Stream.Handle.ToInt64());
                 case ZZObjectType.LONGPOINTER:
                     return new ZZInteger(((ZZLongPointer)obj).Pointer.ToUInt32());
                 default:

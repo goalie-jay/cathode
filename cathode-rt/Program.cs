@@ -15,6 +15,9 @@ namespace cathode_rt
 
         static int Main(string[] args)
         {
+            // Initialize C library
+            FastOps.Setup();
+
             Console.Title = "cathode-rt";
 
             GlobalContext = new ExecutionContext(true);

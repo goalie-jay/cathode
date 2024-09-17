@@ -13,15 +13,7 @@ namespace cathode_rt
         [ZZFunction("system", "Sys")]
         public static ZZInteger SystemFn(ZZString command)
         {
-            ProcessStartInfo info = new ProcessStartInfo();
-            info.FileName = Environment.GetEnvironmentVariable("comspec");
-            info.Arguments = "/c " + "\"" + command.ToString() + "\"";
-
-            using (Process proc = Process.Start(info))
-            {
-                proc.WaitForExit();
-                return new ZZInteger(proc.ExitCode);
-            }
+            return FastOps.System(command.Contents);
         }
 
         [ZZFunction("system", "Sleep")]
@@ -52,13 +44,26 @@ namespace cathode_rt
             return (ZZString)env;
         }
 
-        //[ZZFunction("system", "importnative")]
-        //public static ZZLongPointer ImportNative(string libName)
+        //[ZZFunction("system", "NativeFunction")]
+        //public static ZZLongPointer NativeFunction(ZZString libName, ZZString fnName)
         //{
-        //    return new ZZLongPointer(LoadLibrary(libName));
+        //    return FastOps.GetNativeFunction(libName.Contents, fnName.Contents);
         //}
 
-        //[DllImport("kernel32", SetLastError = true, CharSet = CharSet.Ansi)]
-        //static extern UIntPtr LoadLibrary([MarshalAs(UnmanagedType.LPStr)] string lpFileName);
+        //[ZZFunction("system", "NativeFunctionCall")]
+        //public static ZZObject NativeFunctionCall(ZZLongPointer lp, ZZString callingConvention, 
+        //    ZZArray argsArr)
+        //{
+        //    if (lp.Pointer == UIntPtr.Zero)
+        //        throw new InterpreterRuntimeException("Tried to call a native function at a null pointer.");
+
+
+        //}
+
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Ansi)]
+        private static extern UIntPtr LoadLibrary([MarshalAs(UnmanagedType.LPStr)] string lpFileName);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Ansi, ExactSpelling = true, SetLastError = true)]
+        private static extern IntPtr GetProcAddress(IntPtr hModule, string procName);
     }
 }

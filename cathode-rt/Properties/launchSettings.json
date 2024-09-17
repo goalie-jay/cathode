@@ -1,7 +1,8 @@
 {
   "profiles": {
     "zz-rt": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "main.ctd\r\n"
     }
   }
 }

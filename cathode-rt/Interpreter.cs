@@ -5,6 +5,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Reflection;
 
 namespace cathode_rt
 {
@@ -1349,7 +1350,8 @@ namespace cathode_rt
                                         break;
                                     default:
                                         // intVar.Value = Context.GetIncrementResultUsingTable(intVar);
-                                        ++intVar.Value;
+                                        // ++intVar.Value;
+                                        FastOps.FastInc(intVar);
                                         break;
                                 }
 

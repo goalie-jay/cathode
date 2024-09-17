@@ -225,21 +225,7 @@ namespace cathode_rt
 
         public override ZZObjectType ObjectType => ZZObjectType.INTEGER;
 
-        private long _value;
-        public long Value
-        {
-            get
-            {
-                return _value;
-            }
-            set
-            {
-                Debug.Assert(!ReferenceEquals(this, Zero) && !ReferenceEquals(this, One) &&
-                    !ReferenceEquals(this, NegativeOne));
-
-                _value = value;
-            }
-        }
+        public long Value;
 
         public ZZInteger(long value)
         {
@@ -253,7 +239,7 @@ namespace cathode_rt
 
         public override ZZString ToInLanguageString()
         {
-            return new ZZString(Value.ToString());
+            return new ZZString(FastOps.Long2String(Value));
         }
 
         //public static implicit operator int(ZZInteger zzint)

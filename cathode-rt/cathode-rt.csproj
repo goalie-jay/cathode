@@ -19,6 +19,13 @@
 	
   <PropertyGroup>
     <PublishAot>true</PublishAot>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+	
+  <ItemGroup>
+    <Compile Remove="FastOps - Copy\**" />
+    <EmbeddedResource Remove="FastOps - Copy\**" />
+    <None Remove="FastOps - Copy\**" />
+  </ItemGroup>
 
 </Project>
