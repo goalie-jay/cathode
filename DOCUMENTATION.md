@@ -73,8 +73,8 @@ Expressions are evaluated from right to left. Keep that in mind when writing exp
 
 *	Produces a nonzero value if the expression on the left side is not equal to the expression on the right side. Otherwise, zero is returned
 
-#### inc ( identifier, increment )
+#### inc ( identifier )
 
-*	Increments the given identifier by a constant increment. The identifier must be a single variable, and the increment must be constant (that's what makes it fast)
-*	If you're doing a loop where increments are constant and speed is a necessity, this is the fastest way to increment your index variable
+*	Increments the given identifier by one. The identifier must be a single variable
+*	If you're doing a loop where the increment is one (or a constant that can be achieved through multiplying the iterator) and speed is a necessity, this is the fastest way to increment your index variable
 *	This is really only a useful optimization if you're looping thousands of times
