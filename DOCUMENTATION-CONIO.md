@@ -4,13 +4,13 @@
 
 ### Functions
 
-#### Width()
+#### cWidth()
 
 *	Arguments: none
 *	Returns: integer
 *	Description: Gets the console window width
 
-#### Height()
+#### cHeight()
 
 *	Arguments: none
 *	Returns: integer
