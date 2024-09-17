@@ -21,9 +21,9 @@ A dynamically-typed, interpreted programming language that believes in using fun
 
 ### Installing the Language Runtime
 
-~~To get started, download the latest release from the [releases page](https://github.com/rocky-horror/cathode/releases) and follow the installation instructions~~
+To get started, download the latest release from the [releases page](https://github.com/rocky-horror/cathode/releases)
 
-*	^ You would be able to do that if releases existed. They don't yet because the language is incomplete and highly unstable, so you'll have to compile the interpreter to use it
+*	^ The language is incomplete and highly unstable, so I recommend compiling the interpreter from source so you have access to a debugger
 
 ## Documentation
 
