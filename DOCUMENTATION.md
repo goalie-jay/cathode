@@ -7,6 +7,8 @@
 *	[conio](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION-CONIO.md)
 *	[fileio](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION-FILEIO.md)
 *	[array](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION-ARRAY.md)
+*	[network](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION-NETWORK.md)
+*	[tcpio](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION-TCPIO.md)
 
 ## Data types
 
