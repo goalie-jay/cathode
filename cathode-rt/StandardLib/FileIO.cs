@@ -219,18 +219,21 @@ namespace cathode_rt
         }
 
         [ZZFunction("fileio", "fRead")]
-        public static ZZObject FileRead(ZZFileHandle handle, int count)
+        public static ZZObject FileRead(ZZFileHandle handle, ZZInteger count)
         {
-            byte[] arr = new byte[count];
+            if (count.Value < 0)
+                throw new InterpreterRuntimeException("Tried to read a negative amount of bytes.");
+
+            byte[] arr = new byte[count.Value];
             int bytesRead = -1;
             try
             {
-                bytesRead = handle.Stream.Read(arr, 0, count);
+                bytesRead = handle.Stream.Read(arr, 0, (int)count.Value);
             }
             catch { return ZZVoid.Void; }
 
             if (bytesRead == -1)
-                return new ZZArray(new ZZObject[] { });
+                return new ZZArray(Array.Empty<ZZObject>());
 
             List<ZZObject> objects = new List<ZZObject>();
             for (int i = 0; i < bytesRead; ++i)
