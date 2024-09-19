@@ -28,16 +28,16 @@ namespace cathode_rt
         }
 
         [ZZFunction("conio", "Print")]
-        public static ZZVoid Print(ZZString str)
+        public static ZZVoid Print(ZZObject obj)
         {
-            Console.Write(str.ToString());
+            Console.Write(obj.ToInLanguageString().ToString());
             return ZZVoid.Void;
         }
 
         [ZZFunction("conio", "PrintLn")]
-        public static ZZVoid PrintLn(ZZString str)
+        public static ZZVoid PrintLn(ZZObject obj)
         {
-            Console.WriteLine(str.ToString());
+            Console.WriteLine(obj.ToInLanguageString().ToString());
             return ZZVoid.Void;
         }
 

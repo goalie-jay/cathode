@@ -22,17 +22,17 @@
 *	Returns: void
 *	Description: Sets the console window title to the given string
 
-#### Print(str)
+#### Print(obj)
 
-*	Arguments: str (string)
+*	Arguments: obj (anything)
 *	Returns: void
-*	Description: Prints the given string to the console
+*	Description: Prints the given object (with a string conversion if necessary) to the console
 
-#### PrintLn(str)
+#### PrintLn(obj)
 
-*	Arguments: str (string)
+*	Arguments: obj (anything)
 *	Returns: void
-*	Description: Prints the given string to the console
+*	Description: Prints the given object (with a string conversion if necessary) to the console followed by a line terminator
 
 #### ReadLn()
 
