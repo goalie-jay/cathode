@@ -11,7 +11,7 @@ namespace cathode_rt
         public static string ExecutingFile = string.Empty;
         public const int MajorVersionNumber = 0;
         public const int MinorVersionNumber = 0;
-        public const int IncrementVersionNumber = 1;
+        public const int IncrementVersionNumber = 2;
 
         static int Main(string[] args)
         {
