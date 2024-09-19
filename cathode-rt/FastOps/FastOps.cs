@@ -48,6 +48,8 @@ namespace cathode_rt
 
         [DllImport("CFastOps.dll")]
         public static unsafe extern void GetRandomBytes(byte* ptr, long count);
+        [DllImport("CFastOps.dll")]
+        public static extern void SetRandomSeed(long seed);
 
         [DllImport("CFastOps.dll")]
         public static extern void Setup();

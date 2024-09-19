@@ -38,14 +38,6 @@ EXPORT LONGLONG FindFunctionAndLoadLibraryIfNecessary(LPCSTR szLibName, LPCSTR s
 
 EXPORT VOID GetRandomBytes(LPVOID lp, LONGLONG count)
 {
-    static INT seeded = 0;
-
-    if (seeded == 0)
-    {
-        seeded = 1;
-        srand(GetTickCount());
-    }
-
     for (INT i = 0; i < count; ++i)
         ((LPBYTE)lp)[i] = (BYTE)rand();
 }
@@ -55,7 +47,12 @@ EXPORT INT System(LPCSTR sz)
     return system(sz);
 }
 
+EXPORT VOID SetRandomSeed(LONGLONG seed)
+{
+    srand(seed);
+}
+
 EXPORT VOID Setup()
 {
-	
+    srand(GetTickCount());
 }

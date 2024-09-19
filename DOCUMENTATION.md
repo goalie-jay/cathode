@@ -9,6 +9,8 @@
 *	[array](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION-ARRAY.md)
 *	[network](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION-NETWORK.md)
 *	[tcpio](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION-TCPIO.md)
+*	[string](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION-STRING.md)
+*	[random](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION-RANDOM.md)
 
 ## Data types
 

@@ -23,24 +23,6 @@
 *	Arguments: value (integer)
 *	Returns: integer
 *	Description: Returns the absolute value of the given integer
-
-#### RandomInt()
-
-*	Arguments: none
-*	Returns: integer
-*	Description: Returns a random integer
-
-#### RandomFloat()
-
-*	Arguments: none
-*	Returns: float
-*	Description: Returns a random float
-
-#### RandomBytes(length)
-
-*	Arguments: length (integer)
-*	Returns: array
-*	Description: Returns a pseudorandom array of bytes with the given length
 	
 #### BytesToStr(bytes, encoding)
 
