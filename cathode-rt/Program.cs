@@ -57,7 +57,8 @@ namespace cathode_rt
                 
                 try
                 {
-                    sr = new StreamReader(filename);
+                    FileStream fs = File.Open(filename, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                    sr = new StreamReader(fs);
                 }
                 catch
                 {
@@ -87,7 +88,8 @@ namespace cathode_rt
                 {
                     try
                     {
-                        StreamReader includeReader = new StreamReader(file);
+                        FileStream fs = File.Open(file, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+                        StreamReader includeReader = new StreamReader(fs);
                         long posBackup = includeReader.BaseStream.Position;
                         string line = includeReader.ReadLine();
 
@@ -106,6 +108,8 @@ namespace cathode_rt
                         return 5;
                     }
                 }
+
+                sr.Dispose();
 
                 string[] fnMain = GlobalContext.GetFunctionOrReturnNullIfNotPresent("Main", 
                     out ZZFunctionDescriptor mainDescriptor);
@@ -146,7 +150,6 @@ namespace cathode_rt
                     retVal = GlobalContext.LastReturnValue;
                 }
 #endif
-                sr.Dispose();
 
                 // Use stored retVal because global context is dead atp
 
