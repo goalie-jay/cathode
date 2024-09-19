@@ -1439,8 +1439,6 @@ namespace cathode_rt
 
                                 throw new InterpreterRuntimeException("Tried to dereference function with an invalid index.");
 
-                                break;
-
                             default:
                                 throw new InterpreterRuntimeException("Tried to dereference function with a non-zero index.");
                         }

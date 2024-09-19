@@ -8,6 +8,13 @@ namespace cathode_rt
 {
     public static partial class ImplMethods
     {
+        [ZZFunction("conio", "cClear")]
+        public static ZZVoid ClearConsole()
+        {
+            Console.Clear();
+            return ZZVoid.Void;
+        }
+
         [ZZFunction("conio", "cWidth")]
         public static ZZInteger GetConsoleWidth()
         {

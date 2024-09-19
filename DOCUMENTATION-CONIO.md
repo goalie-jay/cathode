@@ -4,6 +4,12 @@
 
 ### Functions
 
+#### cClear()
+
+*	Arguments: none
+*	Returns: void
+*	Description: Clears the console window
+
 #### cWidth()
 
 *	Arguments: none

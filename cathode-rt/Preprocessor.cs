@@ -87,7 +87,12 @@ namespace cathode_rt
                         currentFunc = null;
                     }
                     else
+                    {
+                        while (line.Trim().EndsWith(" \\"))
+                            line = line.Trim().Substring(0, line.Trim().Length - 1) + allLinesInFile[++i];
+
                         lines.Add(line);
+                    }
                 }
                 else if (line.Trim().StartsWith("fndef "))
                 {
