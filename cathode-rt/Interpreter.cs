@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Reflection;
+using System.Threading;
 
 namespace cathode_rt
 {
@@ -46,6 +47,8 @@ namespace cathode_rt
         WHILE,
         LOOP,
         ESC,
+        MKREF,
+        DEREF,
 
         EOL
     }
@@ -362,6 +365,60 @@ namespace cathode_rt
                                     ++Position;
                                     return new Token(TokenType.WHILE, null);
                                 }
+                            }
+                        }
+                    }
+                }
+
+                Position = posBackup;
+            }
+
+            // mkref
+            if (CurrentChar == 'm')
+            {
+                int posBackup = Position;
+                ++Position;
+                if (Position < Text.Length && CurrentChar == 'k')
+                {
+                    ++Position;
+                    if (Position < Text.Length && CurrentChar == 'r')
+                    {
+                        ++Position;
+                        if (Position < Text.Length && CurrentChar == 'e')
+                        {
+                            ++Position;
+                            if (Position < Text.Length && CurrentChar == 'f')
+                            {
+                                ++Position;
+                                if (Position >= Text.Length || !char.IsLetterOrDigit(CurrentChar))
+                                    return new Token(TokenType.MKREF, null);
+                            }
+                        }
+                    }
+                }
+
+                Position = posBackup;
+            }
+
+            // deref
+            if (CurrentChar == 'd')
+            {
+                int posBackup = Position;
+                ++Position;
+                if (Position < Text.Length && CurrentChar == 'e')
+                {
+                    ++Position;
+                    if (Position < Text.Length && CurrentChar == 'r')
+                    {
+                        ++Position;
+                        if (Position < Text.Length && CurrentChar == 'e')
+                        {
+                            ++Position;
+                            if (Position < Text.Length && CurrentChar == 'f')
+                            {
+                                ++Position;
+                                if (Position >= Text.Length || !char.IsLetterOrDigit(CurrentChar))
+                                    return new Token(TokenType.DEREF, null);
                             }
                         }
                     }
@@ -1304,6 +1361,68 @@ namespace cathode_rt
 
                 case TokenType.IDENTIFIER:
                     return EvaluateIdentifierExpr();
+
+                case TokenType.MKREF:
+                    {
+                        Consume(TokenType.MKREF);
+                        Consume(TokenType.LEFTPARENTHESIS);
+                        Token id = CurrentToken;
+                        Consume(TokenType.IDENTIFIER);
+                        Consume(TokenType.RIGHTPARENTHESIS);
+
+                        ZZString fnName = (ZZString)id.Value;
+
+                        ZZFunctionDescriptor[] allDescriptors = Program.GlobalContext.FunctionsAndBodies.Keys.ToArray();
+                        long idx = -1;
+
+                        for (long n = 0; n < allDescriptors.Length; ++n)
+                            if (allDescriptors[n].Name == fnName.Contents
+                                && Program.CurrentlyExecutingContext
+                                    .ImportedNamespaces.Contains(allDescriptors[n].Namespace)) /*Make sure it's imported*/
+                            {
+                                idx = n;
+                                break;
+                            }
+
+                        if (idx == -1)
+                            throw new InterpreterRuntimeException("Tried to make reference to nonexistent function.");
+
+                        return EvaluateExpr(new ZZInteger(idx));
+                    }
+
+                case TokenType.DEREF:
+                    {
+                        Consume(TokenType.DEREF);
+                        Consume(TokenType.LEFTPARENTHESIS);
+
+                        ZZObject value = Evaluate();
+
+                        Consume(TokenType.RIGHTPARENTHESIS);
+
+                        switch (value.ObjectType)
+                        {
+                            case ZZObjectType.INTEGER:
+                                long idx = ((ZZInteger)value).Value;
+
+                                if (idx > -1 && idx < Program.GlobalContext.FunctionsAndBodies.Count)
+                                    // Faster by nanoseconds than checking the other way
+                                {
+                                    ZZFunctionDescriptor desc = 
+                                        Program.GlobalContext.FunctionsAndBodies.Keys.ToArray()[idx];
+
+                                    // TODO: Optimize this by skipping identifier step since we already
+                                    //  know which function it is
+                                    return EvaluateFunctionCallExpr(new Token(TokenType.IDENTIFIER, (ZZString)desc.Name));
+                                }
+
+                                throw new InterpreterRuntimeException("Tried to dereference function with an invalid index.");
+
+                                break;
+
+                            default:
+                                throw new InterpreterRuntimeException("Tried to dereference function with a non-zero index.");
+                        }
+                    }
 
                 case TokenType.VOID:
                 case TokenType.STRING_CONSTANT:
