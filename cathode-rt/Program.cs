@@ -53,7 +53,17 @@ namespace cathode_rt
                     return 2;
                 }
 
-                StreamReader sr = new StreamReader(filename);
+                StreamReader sr;
+                
+                try
+                {
+                    sr = new StreamReader(filename);
+                }
+                catch
+                {
+                    Console.WriteLine("Failed to open primary source file.");
+                    return 3;
+                }
 
                 ExecutingFile = Path.GetFullPath(filename);
 
