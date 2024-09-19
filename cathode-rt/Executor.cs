@@ -52,8 +52,11 @@ namespace cathode_rt
 
             Stack<Dictionary<string, ZZObject>> varsBackupForWhile = new Stack<Dictionary<string, ZZObject>>();
             Stack<Stack<ZZInteger>> comparisonStackBackupForWhile = new Stack<Stack<ZZInteger>>();
+
+#if !DEBUG
             try
             {
+#endif
                 for (i = 0; i < lines.Length; ++i)
                 {
                     new Interpreter(ctx, lines[i]).Execute();
@@ -101,12 +104,14 @@ namespace cathode_rt
                         ctx.ReturnWhile = false; // DO NOT FORGET THIS
                     }
                 }
+#if !DEBUG
             }
             catch (InterpreterRuntimeException ex)
             {
                 throw new ExecutorRuntimeException($"A runtime error occurred at line {i + 1} " +
                     $"of function \"{fnName}\": {ex.Message}");
             }
+#endif
 
             ZZObject returnValue = ctx.LastReturnValue;
             ctx.Dispose();

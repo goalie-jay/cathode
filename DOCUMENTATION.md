@@ -41,9 +41,9 @@ Expressions are evaluated from right to left. Keep that in mind when writing exp
 
 *	Inverts the logical expression in front of it
 
-### -(value)
+### -value
 
-*	Flips the sign of the number type inside the parentheses
+*	Flips the sign of the number type supplied
 
 ### [] (array[index])
 

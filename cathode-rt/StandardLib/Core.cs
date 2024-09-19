@@ -30,6 +30,18 @@ namespace cathode_rt
             return strct;
         }
 
+        [ZZFunction("core", "fAbs")]
+        public static ZZFloat fAbs(ZZFloat value)
+        {
+            return new ZZFloat(Math.Abs(value.Value));
+        }
+
+        [ZZFunction("core", "Abs")]
+        public static ZZInteger Abs(ZZInteger value)
+        {
+            return new ZZInteger(Math.Abs(value.Value));
+        }
+
         [ZZFunction("core", "RandomInt")]
         public static ZZInteger RandomInt()
         {

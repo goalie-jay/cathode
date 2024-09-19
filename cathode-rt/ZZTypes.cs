@@ -281,7 +281,12 @@ namespace cathode_rt
         {
             return lhs.Value / rhs.Value;
         }
-        
+
+        public static ZZInteger operator%(ZZInteger lhs, ZZInteger rhs)
+        {
+            return lhs.Value % rhs.Value;
+        }
+
         public static bool operator==(ZZInteger lhs, ZZInteger rhs)
         {
             if (ReferenceEquals(lhs, rhs))

@@ -19,6 +19,7 @@ namespace cathode_rt
         PLUS,
         MINUS,
         ASTERISK,
+        PERCENTAGE,
         BACKSLASH,
         EXCLAMATION,
         LEFTPARENTHESIS,
@@ -638,6 +639,9 @@ namespace cathode_rt
                     case '*':
                         ++Position;
                         return new Token(TokenType.ASTERISK, null);
+                    case '%':
+                        ++Position;
+                        return new Token(TokenType.PERCENTAGE, null);
                     case '/':
                         ++Position;
                         return new Token(TokenType.BACKSLASH, null);
@@ -793,7 +797,7 @@ namespace cathode_rt
         private ZZInteger EvaluateIntegerBinaryExpr(ZZInteger lhsVal)
         {
             Token operation = CurrentToken;
-            ConsumeAny(TokenType.PLUS, TokenType.MINUS, TokenType.ASTERISK, TokenType.BACKSLASH);
+            ConsumeAny(TokenType.PLUS, TokenType.MINUS, TokenType.ASTERISK, TokenType.BACKSLASH, TokenType.PERCENTAGE);
 
             ZZObject testRhs = Evaluate();
 
@@ -813,6 +817,8 @@ namespace cathode_rt
                     return lhsVal / rhsValue;
                 case TokenType.ASTERISK:
                     return lhsVal * rhsValue;
+                case TokenType.PERCENTAGE:
+                    return lhsVal % rhsValue;
             }
 
             return 0;
@@ -1157,7 +1163,8 @@ namespace cathode_rt
         private ZZObject EvaluateExpr(ZZObject value)
         {
             if (((value.ObjectType == ZZObjectType.INTEGER) || (value.ObjectType == ZZObjectType.FLOAT)) &&
-                MatchDoNotConsume(TokenType.PLUS, TokenType.MINUS, TokenType.ASTERISK, TokenType.BACKSLASH))
+                MatchDoNotConsume(TokenType.PLUS, TokenType.MINUS, TokenType.ASTERISK, TokenType.BACKSLASH, 
+                TokenType.PERCENTAGE))
                 return EvaluateBinaryExpr(value);
 
             if (MatchDoNotConsume(TokenType.EQUALSEQUALS))
@@ -1342,13 +1349,28 @@ namespace cathode_rt
 
                 case TokenType.MINUS:
                     {
-                        // Require parentheses
+                        // No more parentheses required for this
                         Consume(TokenType.MINUS);
-                        Consume(TokenType.LEFTPARENTHESIS);
 
-                        ZZObject evalResult = Evaluate();
-
-                        Consume(TokenType.RIGHTPARENTHESIS);
+                        ZZObject evalResult = ZZVoid.Void;
+                        switch (CurrentToken.TokenType)
+                        {
+                            case TokenType.IDENTIFIER:
+                                evalResult = EvaluateVariableRetrievalExpr(CurrentToken);
+                                break;
+                            case TokenType.INTEGER_CONSTANT:
+                                {
+                                    Token constant = CurrentToken;
+                                    Consume(TokenType.INTEGER_CONSTANT);
+                                    return new ZZInteger(-((ZZInteger)constant.Value).Value);
+                                }
+                            case TokenType.FLOAT_CONSTANT:
+                                {
+                                    Token constant = CurrentToken;
+                                    Consume(TokenType.FLOAT_CONSTANT);
+                                    return new ZZFloat(-((ZZFloat)constant.Value).Value);
+                                }
+                        }
 
                         if (evalResult.ObjectType == ZZObjectType.INTEGER)
                             return EvaluateExpr(new ZZInteger(-((ZZInteger)evalResult).Value));

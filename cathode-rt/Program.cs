@@ -106,8 +106,10 @@ namespace cathode_rt
                 }
 
                 ZZObject retVal = null;
+#if !DEBUG
                 try
                 {
+#endif
                     if (mainDescriptor.Arguments.Length > 1)
                     {
                         Console.WriteLine("Main() had an argument count greater than one.");
@@ -123,7 +125,8 @@ namespace cathode_rt
                     }
 
                     retVal = Executor.Execute(GlobalContext, "Main", fnMain);
-                }
+#if !DEBUG
+            }
                 catch (ExecutorRuntimeException ex)
                 {
                     Console.WriteLine("*****");
@@ -132,6 +135,7 @@ namespace cathode_rt
 
                     retVal = GlobalContext.LastReturnValue;
                 }
+#endif
                 sr.Dispose();
 
                 // Use stored retVal because global context is dead atp
