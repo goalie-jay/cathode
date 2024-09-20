@@ -734,13 +734,19 @@ namespace cathode_rt
                     throw new InterpreterRuntimeException("Tried to supply an incorrect amount of parameters in " +
                         "a function call.");
 
+                // Backup execution context
+                ExecutionContext context = Program.CurrentlyExecutingContext;
                 using (ExecutionContext callContext = new ExecutionContext())
                 {
                     for (int i = 0; i < parameters.Count; ++i)
                         callContext.Variables.Add(descriptor.Arguments[i],
                             parameters[i]); // Line up our values with the parameter names
 
-                    return EvaluateExpr(Executor.Execute(callContext, descriptor.Name, userFn));
+                    ZZObject obj = EvaluateExpr(Executor.Execute(callContext, descriptor.Name, userFn));
+
+                    // Restore execution context
+                    Program.CurrentlyExecutingContext = context;
+                    return obj;
                 }
             }
 
@@ -1397,6 +1403,10 @@ namespace cathode_rt
                         ZZFunctionDescriptor[] allDescriptors = Program.GlobalContext.FunctionsAndBodies.Keys.ToArray();
                         long idx = -1;
 
+                        List<string> functionNames = new List<string>();
+                        foreach (var v in allDescriptors)
+                            functionNames.Add(v.Name);
+
                         for (long n = 0; n < allDescriptors.Length; ++n)
                             if (allDescriptors[n].Name == fnName.Contents
                                 && Program.CurrentlyExecutingContext
@@ -1407,7 +1417,11 @@ namespace cathode_rt
                             }
 
                         if (idx == -1)
-                            throw new InterpreterRuntimeException("Tried to make reference to nonexistent function.");
+                        {
+                            throw new InterpreterRuntimeException("Tried to make reference to nonexistent function." +
+                                $" Identifier was {fnName.Contents} but available functions were " +
+                                $"{{ {string.Join(", ", functionNames)} }}");
+                        }
 
                         return EvaluateExpr(new ZZInteger(idx));
                     }
