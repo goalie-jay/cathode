@@ -1409,8 +1409,8 @@ namespace cathode_rt
 
                         for (long n = 0; n < allDescriptors.Length; ++n)
                             if (allDescriptors[n].Name == fnName.Contents
-                                && Program.CurrentlyExecutingContext
-                                    .ImportedNamespaces.Contains(allDescriptors[n].Namespace)) /*Make sure it's imported*/
+                                && Context.ImportedNamespaces
+                                .Contains(allDescriptors[n].Namespace)) /*Make sure it's imported*/
                             {
                                 idx = n;
                                 break;

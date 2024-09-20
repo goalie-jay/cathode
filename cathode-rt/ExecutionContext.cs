@@ -24,6 +24,7 @@ namespace cathode_rt
 
     public class ExecutionContext : IDisposable
     {
+        bool _disposed = false;
         public Dictionary<ZZFunctionDescriptor, string[]> FunctionsAndBodies;
         public Dictionary<string, ZZObject> Variables;
         public List<string> ImportedNamespaces;
@@ -163,6 +164,9 @@ namespace cathode_rt
 
         public string[] GetFunctionOrReturnNullIfNotPresent(string fnName, out ZZFunctionDescriptor outDescriptor)
         {
+            if (_disposed)
+                throw new ObjectDisposedException("ExecutionContext");
+
             outDescriptor = null;
 
             foreach (var f in FunctionsAndBodies.Keys)
@@ -200,6 +204,9 @@ namespace cathode_rt
 
         public System.Reflection.MethodInfo LookupBuiltInFunction(string name)
         {
+            if (_disposed)
+                throw new ObjectDisposedException("ExecutionContext");
+
             if (HotFunctions.ContainsKey(name))
                 return HotFunctions[name];
 
@@ -242,6 +249,8 @@ namespace cathode_rt
 
         public void Dispose()
         {
+            _disposed = true;
+
             ImportedNamespaces.Clear();
             Variables.Clear();
             ComparisonStack.Clear();
