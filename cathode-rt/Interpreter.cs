@@ -683,7 +683,7 @@ namespace cathode_rt
                         return new Token(TokenType.GREATERTHAN, null);
                 }
 
-            throw new Exception();
+            throw new InterpreterRuntimeException($"Unexpected token {CurrentChar}.");
         }
 
         Token Peek(int i = 1)
@@ -975,7 +975,7 @@ namespace cathode_rt
             ZZObject idVal = idToken.Value;
 
             if (!Context.Variables.ContainsKey(((ZZString)idVal).ToString()))
-                throw new Exception("Tried to look up value of an undimensioned variable.");
+                throw new InterpreterRuntimeException("Tried to look up value of an undimensioned variable.");
 
             ZZObject val = Context.Variables[((ZZString)idVal).ToString()];
 
