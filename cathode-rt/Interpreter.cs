@@ -738,6 +738,10 @@ namespace cathode_rt
                 ExecutionContext context = Program.CurrentlyExecutingContext;
                 using (ExecutionContext callContext = new ExecutionContext())
                 {
+                    // Enable recursion
+                    foreach (ZZFunctionDescriptor fnDesc in context.FunctionsAndBodies.Keys)
+                        callContext.FunctionsAndBodies.Add(fnDesc, context.FunctionsAndBodies[fnDesc]);
+
                     for (int i = 0; i < parameters.Count; ++i)
                         callContext.Variables.Add(descriptor.Arguments[i],
                             parameters[i]); // Line up our values with the parameter names
