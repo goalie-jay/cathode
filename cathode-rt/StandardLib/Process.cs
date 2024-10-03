@@ -83,6 +83,41 @@ namespace cathode_rt
             catch { return 0; }
         }
 
+        [ZZFunction("process", "pGetModuleBase")]
+        public static ZZInteger GetModuleBase(ZZInteger pid, ZZObject module)
+        {
+            string str = null;
+
+            switch (module.ObjectType)
+            {
+                case ZZObjectType.STRING:
+                    str = ((ZZString)module).ToString();
+                    break;
+                case ZZObjectType.VOID:
+                    break;
+                default:
+                    throw new ArgumentException();
+            }
+
+            IntPtr moduleBase = IntPtr.Zero;
+            try
+            {
+                using (Process p = Process.GetProcessById((int)pid.Value))
+                    if (str == null)
+                        moduleBase = p.MainModule.BaseAddress;
+                    else
+                        foreach (ProcessModule m in p.Modules)
+                            if (m.ModuleName == str)
+                            {
+                                moduleBase = m.BaseAddress;
+                                break;
+                            }
+            }
+            catch { }
+
+            return (ZZInteger)moduleBase;
+        }
+
         [ZZFunction("process", "EnumProcesses")]
         public static ZZArray EnumProcesses()
         {

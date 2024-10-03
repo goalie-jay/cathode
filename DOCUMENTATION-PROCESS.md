@@ -16,7 +16,11 @@
 *	Returns: integer
 *	Description: Attempts to kill a process and returns 1 if successful. Otherwise, 0 is returned
 
-#### pGetModuleBase(
+#### pGetModuleBase(pid, moduleName)
+
+*	Arguments: pid (integer), moduleName (string, void)
+*	Returns: integer
+*	Description: Attempts to find the module base of a specified module within the process whose id is supplied. If moduleName is void, the function assumes you are requesting the main module of the process. If the function is successful, the base of the given module is returned. Otherwise, zero is returned
 
 #### EnumProcesses()
 
