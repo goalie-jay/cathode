@@ -125,6 +125,37 @@ namespace cathode_rt
             return nw;
         }
 
+        // TODO: Document
+        [ZZFunction("core", "Bytes")]
+        public static ZZArray ConvertToBinary(ZZObject obj)
+        {
+            switch (obj.ObjectType)
+            {
+                case ZZObjectType.BYTE:
+                    return new ZZArray(new ZZObject[] { obj });
+                case ZZObjectType.INTEGER:
+                    {
+                        byte[] binary = BitConverter.GetBytes(((ZZInteger)obj).Value);
+                        List<ZZByte> bytes = new List<ZZByte>();
+                        foreach (byte b in binary)
+                            bytes.Add(b);
+
+                        return new ZZArray(bytes.ToArray());
+                    }
+                case ZZObjectType.FLOAT:
+                    {
+                        byte[] binary = BitConverter.GetBytes(((ZZFloat)obj).Value);
+                        List<ZZByte> bytes = new List<ZZByte>();
+                        foreach (byte b in binary)
+                            bytes.Add(b);
+
+                        return new ZZArray(bytes.ToArray());
+                    }
+                default:
+                    throw new InterpreterRuntimeException("Tried to convert object to binary which has no direct binary representation.");
+            }
+        }
+
         [ZZFunction("core", "Strcat")]
         public static ZZString ConcatenateStrings(ZZArray arr, ZZObject separator)
         {
@@ -459,6 +490,59 @@ namespace cathode_rt
             return new ZZByte((byte)((ZZInteger)result).Value);
         }
 
+        [ZZFunction("core", "ByteArrSmall")]
+        public static ZZObject ByteArrSmall(ZZObject obj)
+        {
+            switch (obj.ObjectType)
+            {
+                case ZZObjectType.INTEGER:
+                    {
+                        List<ZZByte> bytes = new List<ZZByte>();
+                        byte[] realBytes = BitConverter.GetBytes((int)((ZZInteger)obj).Value);
+                        Debug.Assert(realBytes.Length == sizeof(int));
+
+                        for (int i = 0; i < realBytes.Length; ++i)
+                            bytes.Add(new ZZByte(realBytes[i]));
+
+                        return new ZZArray(bytes.ToArray());
+                    }
+                default:
+                    return ZZVoid.Void;
+            }
+        }
+
+        [ZZFunction("core", "ByteArr")]
+        public static ZZObject ByteArr(ZZObject obj)
+        {
+            switch (obj.ObjectType)
+            {
+                case ZZObjectType.INTEGER:
+                    {
+                        List<ZZByte> bytes = new List<ZZByte>();
+                        byte[] realBytes = BitConverter.GetBytes(((ZZInteger)obj).Value);
+                        Debug.Assert(realBytes.Length == sizeof(long));
+
+                        for (int i = 0; i < realBytes.Length; ++i)
+                            bytes.Add(new ZZByte(realBytes[i]));
+
+                        return new ZZArray(bytes.ToArray());
+                    }
+                case ZZObjectType.FLOAT:
+                    {
+                        List<ZZByte> bytes = new List<ZZByte>();
+                        byte[] realBytes = BitConverter.GetBytes(((ZZFloat)obj).Value);
+                        Debug.Assert(realBytes.Length == sizeof(double));
+
+                        for (int i = 0; i < realBytes.Length; ++i)
+                            bytes.Add(new ZZByte(realBytes[i]));
+
+                        return new ZZArray(bytes.ToArray());
+                    }
+                default:
+                    return ZZVoid.Void;
+            }
+        }
+
         [ZZFunction("core", "Integer")]
         public static ZZObject ConvertToInteger(ZZObject obj)
         {
@@ -479,6 +563,31 @@ namespace cathode_rt
                     return new ZZInteger(((ZZFileHandle)obj).Stream.Handle.ToInt64());
                 case ZZObjectType.LONGPOINTER:
                     return new ZZInteger(((ZZLongPointer)obj).Pointer.ToUInt32());
+                case ZZObjectType.ARRAY:
+                    {
+                        ZZArray arr = (ZZArray)obj;
+
+                        byte[] realBytes = new byte[arr.Objects.Length];
+                        for (int i = 0; i < arr.Objects.Length; ++i)
+                        {
+                            ZZObject elem = arr.Objects[i];
+
+                            if (elem.ObjectType != ZZObjectType.BYTE)
+                                return ZZVoid.Void;
+
+                            realBytes[i] = ((ZZByte)elem).Value;
+                        }
+
+                        switch (realBytes.Length)
+                        {
+                            case sizeof(int):
+                                return (ZZInteger)Convert.ToInt32(realBytes);
+                            case sizeof(long):
+                                return (ZZInteger)Convert.ToInt64(realBytes);
+                            default:
+                                return ZZVoid.Void;
+                        }
+                    }
                 default:
                     return ZZVoid.Void;
             }

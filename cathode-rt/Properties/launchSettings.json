@@ -2,7 +2,7 @@
   "profiles": {
     "zz-rt": {
       "commandName": "Project",
-      "commandLineArgs": "C:\\Users\\Jay\\Documents\\sweep.ctd\r\n"
+      "commandLineArgs": "main.ctd\r\n"
     }
   }
 }

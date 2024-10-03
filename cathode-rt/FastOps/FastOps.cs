@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
+using System.Runtime.ConstrainedExecution;
+using System.Security;
 
 namespace cathode_rt
 {
@@ -32,6 +35,49 @@ namespace cathode_rt
         //{
         //    return new ZZLongPointer((nuint)_FindFunctionAndLoadLibraryIfNecessary(lib, fn));
         //}
+
+        public static unsafe byte[] AttemptToReadProcess(UIntPtr handle, UIntPtr baseAddr, ulong count)
+        {
+            byte[] arr = new byte[count];
+            bool retVal = false;
+
+            retVal = ReadProcessMemory(handle, baseAddr, arr, (int)count, out _);
+
+            if (!retVal)
+                return null;
+
+            return arr;
+        }
+
+        public static unsafe byte AttemptToWriteProcess(UIntPtr handle, UIntPtr baseAddr, byte[] data)
+        {
+            fixed (byte* lp = data)
+            {
+                if (WriteProcessMemory(handle, baseAddr, data, data.Length, out _))
+                    return 1;
+
+                return 0;
+            }
+        }
+
+        [DllImport("CFastOps.dll")]
+        public static extern long AttemptToEnterDebugPrivilege();
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [SuppressUnmanagedCodeSecurity]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool CloseHandle(UIntPtr hObject);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern bool ReadProcessMemory(UIntPtr hProcess, UIntPtr lpBaseAddress, [Out] byte[] lpBuffer,
+            int dwSize, out IntPtr lpNumberOfBytesRead);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        static extern bool WriteProcessMemory(UIntPtr hProcess, UIntPtr lpBaseAddress, byte[] lpBuffer, 
+            int nSize, out IntPtr lpNumberOfBytesWritten);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern UIntPtr OpenProcess(uint processAccess, bool bInheritHandle, uint processId);
 
         [DllImport("CFastOps.dll", CallingConvention = CallingConvention.Cdecl, EntryPoint = "LongToString")]
         private static extern unsafe void _LongToString(long* ptr, [MarshalAs(UnmanagedType.LPStr)] StringBuilder result);

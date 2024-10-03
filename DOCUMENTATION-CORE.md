@@ -169,6 +169,20 @@
 *	Description: Converts the supplied object to a byte and returns the result. If conversion is impossible, void is returned
 *	Additional notes: Conversion is defined for the following types: integer, float, byte, filehandle, and alphanumeric string
 	
+#### ByteArrSmall(obj)
+
+*	Arguments: obj (any)
+*	Returns: array, void
+*	Description: Converts the supplied object into its 32-bit binary representation. If conversion is impossible, void is returned
+*	Additional notes: ByteArrSmall() is currently only supported for integers
+
+#### ByteArr(obj)
+
+*	Arguments: obj (any)
+*	Returns: array, void
+*	Description: Converts the supplied object into its 64-bit binary representation. If conversion is impossible, void is returned
+*	Additional notes: ByteArr() is currently only supported for integers and floats
+	
 #### Integer(obj)
 
 *	Arguments: obj (any)

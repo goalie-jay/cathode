@@ -599,12 +599,6 @@ namespace cathode_rt
 
                 while (CurrentChar != '"')
                 {
-                    stringLiteral.Append(CurrentChar);
-                    ++Position;
-
-                    if (Position >= Text.Length)
-                        break;
-
                     if (CurrentChar == '\\')
                     {
                         // Escape sequence
@@ -621,6 +615,14 @@ namespace cathode_rt
                             throw new InterpreterRuntimeException("Line terminated before string literal ended.");
 
                         // I know this looks like crap but idk how else to do it rn
+                    }
+                    else
+                    {
+                        stringLiteral.Append(CurrentChar);
+                        ++Position;
+
+                        if (Position >= Text.Length)
+                            break;
                     }
                 }
 
@@ -771,6 +773,8 @@ namespace cathode_rt
                         "or parameters with incorrect types to a standard function. " +
                         "Are you calling the correct function? Did you forget " +
                         "a type conversion?");
+                else if (ex is TargetInvocationException)
+                    throw ex.InnerException;
                 else
                     throw;
             }
