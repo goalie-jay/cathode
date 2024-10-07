@@ -84,7 +84,7 @@ namespace cathode_rt
         }
 
         [ZZFunction("process", "pGetModuleBase")]
-        public static ZZInteger GetModuleBase(ZZInteger pid, ZZObject module)
+        public static ZZLongPointer GetModuleBase(ZZInteger pid, ZZObject module)
         {
             string str = null;
 
@@ -115,7 +115,7 @@ namespace cathode_rt
             }
             catch { }
 
-            return (ZZInteger)moduleBase;
+            return new ZZLongPointer((UIntPtr)(ulong)moduleBase);
         }
 
         [ZZFunction("process", "EnumProcesses")]
@@ -181,14 +181,15 @@ namespace cathode_rt
         }
 
         [ZZFunction("process", "pRead")]
-        public static ZZObject ReadProcess(ZZInteger handleIdx, ZZInteger addr, ZZInteger count)
+        public static ZZObject ReadProcess(ZZInteger handleIdx, ZZLongPointer bse, ZZInteger offs, ZZInteger count)
         {
             UIntPtr pointer = ProcessBackend.GetHandleAtIdx((int)handleIdx.Value);
 
             if (pointer == UIntPtr.Zero)
                 throw new InterpreterRuntimeException("Tried to read from a nonexistent process.");
 
-            byte[] byteArr = FastOps.AttemptToReadProcess(pointer, (UIntPtr)addr.Value, (UIntPtr)count.Value);
+            byte[] byteArr = FastOps.AttemptToReadProcess(pointer, 
+                UIntPtr.Add(bse.Pointer, (int)offs.Value), (UIntPtr)count.Value);
 
             if (byteArr == null)
                 return ZZVoid.Void;
@@ -202,7 +203,7 @@ namespace cathode_rt
         }
 
         [ZZFunction("process", "pWrite")]
-        public static ZZInteger WriteProcess(ZZInteger handleIdx, ZZInteger addr, ZZArray byteArr)
+        public static ZZInteger WriteProcess(ZZInteger handleIdx, ZZLongPointer bse, ZZInteger offs, ZZArray byteArr)
         {
             UIntPtr pointer = ProcessBackend.GetHandleAtIdx((int)handleIdx.Value);
 
@@ -219,7 +220,7 @@ namespace cathode_rt
                 binary[i] = ((ZZByte)byteArr.Objects[i]).Value;
             }
 
-            return FastOps.AttemptToWriteProcess(pointer, (UIntPtr)addr.Value, binary);
+            return FastOps.AttemptToWriteProcess(pointer, UIntPtr.Add(bse.Pointer, (int)offs.Value), binary);
         }
 
         [ZZFunction("process", "pClose")]

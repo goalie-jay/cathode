@@ -9,6 +9,21 @@ namespace cathode_rt
 {
     public static partial class ImplMethods
     {
+        [ZZFunction("core", "PtrZero")]
+        public static ZZInteger PointerIsZero(ZZLongPointer lp)
+        {
+            if (lp.Pointer == UIntPtr.Zero)
+                return 1;
+
+            return 0;
+        }
+
+        [ZZFunction("core", "PtrAddOffs")]
+        public static ZZLongPointer PointerAddOffs(ZZLongPointer lp, ZZInteger offs)
+        {
+            return new ZZLongPointer(UIntPtr.Add(lp.Pointer, (int)offs.Value));
+        }
+
         [ZZFunction("core", "RuntimeInfo")]
         public static ZZStruct GetRuntimeInfo()
         {
@@ -562,7 +577,7 @@ namespace cathode_rt
                 case ZZObjectType.FILEHANDLE:
                     return new ZZInteger(((ZZFileHandle)obj).Stream.Handle.ToInt64());
                 case ZZObjectType.LONGPOINTER:
-                    return new ZZInteger(((ZZLongPointer)obj).Pointer.ToUInt32());
+                    return new ZZInteger((long)((ZZLongPointer)obj).Pointer.ToUInt64());
                 case ZZObjectType.ARRAY:
                     {
                         ZZArray arr = (ZZArray)obj;

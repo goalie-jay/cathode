@@ -6,6 +6,18 @@
 
 ### Functions
 
+#### PtrZero(lp)
+
+*	Arguments: lp (longpointer)
+*	Returns: integer
+*	Description: Returns 1 if the pointer's value is zero. Otherwise, 0 is returned
+
+#### PtrAddOffs(lp, offs)
+
+*	Arguments: lp (longpointer), offs (integer)
+*	Returns: longpointer
+*	Description: Adds the given offset offs to the given longpointer lp and returns a new longpointer with the resulting value
+
 #### RuntimeInfo()
 
 *	Arguments: none

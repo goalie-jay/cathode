@@ -41,17 +41,17 @@
 *	Description: Attempts to open a process with the given perms ("r", "w", or "rw) and process id, and returns the handle index if successful. Otherwise, -1 is returned
 *	Additional notes: Be wary when writing your error checking; this function *can* return zero from a successful call
 
-#### pRead(handleIdx, addr, count)
+#### pRead(handleIdx, base, offs, count)
 
-*	Arguments: handleIdx (integer), addr (integer), count (integer)
+*	Arguments: handleIdx (integer), base (longpointer), offs (integer), count (integer)
 *	Returns: array
-*	Description: Attempts to read the given count of bytes from the process with the given handle and base addr and returns the read section as a byte array if successful. Otherwise, void is returned
+*	Description: Attempts to read the given count of bytes from the process with the given handle at base+offs and returns the read section as a byte array if successful. Otherwise, void is returned
 
-#### pWrite(handleIdx, addr, byteArr)
+#### pWrite(handleIdx, base, offs, byteArr)
 
-*	Arguments: handleIdx (integer), addr (integer), byteArr (array)
+*	Arguments: handleIdx (integer), base (longpointer), offs (integer), byteArr (array)
 *	Returns: integer
-*	Description: Attempts to write the given count of bytes to the process with the given handle and base addr and returns 1 if successful. Otherwise, 0 is returned
+*	Description: Attempts to write the given count of bytes to the process with the given handle at offset base+offs and returns 1 if successful. Otherwise, 0 is returned
 
 #### pClose(handleIdx)
 
