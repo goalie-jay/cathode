@@ -45,3 +45,27 @@
 *	Arguments: none
 *	Returns: string
 *	Description: Reads a line from the console and returns it
+
+#### cGetX()
+
+*	Arguments: none
+*	Returns: integer
+*	Description: Returns the x position of the console cursor
+
+#### cGetY()
+
+*	Arguments: none
+*	Returns: integer
+*	Description: Returns the y position of the console cursor
+
+#### cSetPos(x, y)
+
+*	Arguments: x (integer), y (integer)
+*	Returns: integer
+*	Description: Attempts to the set the coordinates of the console cursor to the given x and y and returns 1 if successful. Otherwise, 0 is returned
+
+#### cCharAt(x, y)
+
+*	Arguments: x (integer), y (integer)
+*	Returns: integer, void
+*	Description: Attempts to get the character at the given coordinates in the console buffer and returns it if successful. Otherwise, void is returned

@@ -18,6 +18,19 @@ namespace cathode_rt
             return 0;
         }
 
+        [ZZFunction("core", "VoidArr")]
+        public static ZZArray VoidArr(ZZInteger length)
+        {
+            if (length.Value == 0)
+                return new ZZArray(Array.Empty<ZZObject>());
+
+            ZZObject[] objects = new ZZObject[length.Value];
+            for (int i = 0; i < length.Value; ++i)
+                objects[i] = ZZVoid.Void;
+
+            return new ZZArray(objects);
+        }
+
         [ZZFunction("core", "PtrAddOffs")]
         public static ZZLongPointer PointerAddOffs(ZZLongPointer lp, ZZInteger offs)
         {
