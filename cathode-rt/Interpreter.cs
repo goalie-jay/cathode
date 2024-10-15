@@ -1108,7 +1108,7 @@ namespace cathode_rt
             return EvaluateExpr(EvaluateVariableRetrievalExpr(identifier));
         }
 
-        private ZZObject EvaluateEqualityCheckExpr(ZZObject value)
+        private ZZInteger EvaluateEqualityCheckExpr(ZZObject value)
         {
             Consume(TokenType.EQUALSEQUALS);
 
@@ -1117,7 +1117,7 @@ namespace cathode_rt
             return ImplMethods.Compare(value, evalResult);
         }
 
-        private ZZObject EvaluateInequalityCheckExpr(ZZObject value)
+        private ZZInteger EvaluateInequalityCheckExpr(ZZObject value)
         {
             Consume(TokenType.EXCLAMATIONEQUALS);
 
@@ -1126,7 +1126,7 @@ namespace cathode_rt
             return ImplMethods.Negate(ImplMethods.Compare(value, evalResult));
         }
 
-        private ZZObject EvaluateLogicalAndExpr(ZZObject value)
+        private ZZInteger EvaluateLogicalAndExpr(ZZObject value)
         {
             if (value.ObjectType != ZZObjectType.INTEGER)
                 throw new InterpreterRuntimeException("Tried to use non-integer for left side of logical and expression.");

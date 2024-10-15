@@ -21,11 +21,5 @@ namespace cathode_rt
             FastOps.AllocConsole();
             return ZZVoid.Void;
         }
-
-        //[ZZFunction("graphics", "MkWindow")]
-        //public static ZZVoid CreateAWindow()
-        //{
-
-        //}
     }
 }

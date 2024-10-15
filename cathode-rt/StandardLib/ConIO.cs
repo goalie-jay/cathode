@@ -66,7 +66,8 @@ namespace cathode_rt
         [ZZFunction("conio", "PrintLn")]
         public static ZZVoid PrintLn(ZZObject obj)
         {
-            Console.WriteLine(obj.ToInLanguageString().ToString());
+            string prntStr = obj.ToInLanguageString().ToString();
+            Console.WriteLine(prntStr);
             return ZZVoid.Void;
         }
 

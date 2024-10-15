@@ -72,6 +72,12 @@
 *	Returns: string
 *	Description: Concatenates the strings in the array with each other and returns the result. The separator parameter can be used for its nominal purpose or will be ignored if void is passed
 	
+#### EnumFields(strct)
+
+*	Arguments: strct (struct)
+*	Returns: array
+*	Description: Returns an array containing the names of the fields of the given struct
+	
 #### HasField(strct, name)
 
 *	Arguments: strct (struct), name (string)

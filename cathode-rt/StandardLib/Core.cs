@@ -206,6 +206,12 @@ namespace cathode_rt
             throw new ArgumentException();
         }
 
+        [ZZFunction("core", "EnumFields")]
+        public static ZZArray EnumFields(ZZStruct strct)
+        {
+            return new ZZArray(strct.Fields.Keys.ToArray());
+        }
+
         [ZZFunction("core", "HasField")]
         public static ZZInteger HasField(ZZStruct strct, ZZString name)
         {
@@ -221,7 +227,7 @@ namespace cathode_rt
             return strct.Fields[name];
         }
 
-        [ZZFunction("core", "Setfield")]
+        [ZZFunction("core", "SetField")]
         public static ZZVoid SetField(ZZStruct strct, ZZString name, ZZObject obj)
         {
             if (!strct.Fields.ContainsKey(name))
