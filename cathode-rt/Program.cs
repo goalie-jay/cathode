@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography.X509Certificates;
 
 namespace cathode_rt
 {
@@ -18,9 +19,7 @@ namespace cathode_rt
             // Initialize C library
             FastOps.Setup();
 
-            // Initialize graphics
-            // Window.Setup();
-
+            bool compile = false;
             Console.Title = "cathode-rt";
 
             GlobalContext = new ExecutionContext(true);
@@ -29,6 +28,10 @@ namespace cathode_rt
             {
                 CurrentlyExecutingContext = GlobalContext;
                 Console.WriteLine("No source file was supplied; interpreter will run interactively.");
+                Console.WriteLine("Control flow statements are NOT supported. Attempting to use them will throw errors/not function as intended.");
+                Console.WriteLine("Auto-importing \"conio\" for interactive session...");
+                CurrentlyExecutingContext.ImportNamespace("conio");
+
                 string input;
                 while (true)
                 {
@@ -36,7 +39,9 @@ namespace cathode_rt
                     input = Console.ReadLine();
                     try
                     {
-                        new Interpreter(GlobalContext, input).Execute();
+                        new Parser(new Lexer(new string[] { input }).Lex()).Parse()
+                            .GetMainNode().Execute(GlobalContext);
+                            // Holy one-liner, Batman!
                     }
                     catch (InterpreterRuntimeException ex)
                     {
@@ -48,7 +53,10 @@ namespace cathode_rt
             }
             else
             {
-                string filename = args[0];
+                if (args[0] == "--compile" && args.Length >= 1)
+                    compile = true;
+
+                string filename = compile ? args[1] : args[0];
 
                 if (!File.Exists(filename))
                 {
@@ -83,50 +91,67 @@ namespace cathode_rt
                     return 1;
                 }
 
-                sr.BaseStream.Seek(0, SeekOrigin.Begin);
-                GlobalContext.FunctionsAndBodies = Preprocessor.ScanFunctionNamesToFunctionBodies(sr);
-
-                // Scan functions from includes
-                foreach (string file in includedFiles)
-                {
-                    try
-                    {
-                        FileStream fs = File.Open(file, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
-                        StreamReader includeReader = new StreamReader(fs);
-                        long posBackup = includeReader.BaseStream.Position;
-                        string line = includeReader.ReadLine();
-
-                        string ns = "core";
-                        if (line.StartsWith("namespace "))
-                            ns = line.Substring("namespace ".Length).Trim();
-                        else
-                            includeReader.BaseStream.Position = posBackup;
-
-                        GlobalContext.AddFunctionDictionary(Preprocessor.ScanFunctionNamesToFunctionBodies(includeReader,
-                                ns));
-                    }
-                    catch
-                    {
-                        Console.WriteLine($"Failed to parse included file {file}.");
-                        return 5;
-                    }
-                }
-
-                sr.Dispose();
-
-                string[] fnMain = GlobalContext.GetFunctionOrReturnNullIfNotPresent("Main", 
-                    out ZZFunctionDescriptor mainDescriptor);
-                if (fnMain == null)
-                {
-                    Console.WriteLine("No main function in source file, aborting...");
-                    return 1;
-                }
-
-                ZZObject retVal = null;
 #if !DEBUG
                 try
                 {
 #endif
+                    bool executionStarted = false;
+                    sr.BaseStream.Seek(0, SeekOrigin.Begin);
+                    Dictionary<ZZFunctionDescriptor, string[]> fnBodiesText = Preprocessor.ScanFunctionNamesToFunctionBodies(sr);
+
+                    foreach (ZZFunctionDescriptor desc in fnBodiesText.Keys)
+                    {
+                        Lexer lex = new Lexer(fnBodiesText[desc]);
+                        Token[] toks = lex.Lex();
+                        SyntaxTree.FunctionBodySyntaxTreeNode primaryNode = new Parser(toks).Parse().GetMainNode();
+                        GlobalContext.AddFunc(desc, primaryNode);
+                    }
+
+                    // Scan functions from includes
+                    foreach (string file in includedFiles)
+                    {
+                        try
+                        {
+                            FileStream fs = File.Open(file, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite);
+                            StreamReader includeReader = new StreamReader(fs);
+                            long posBackup = includeReader.BaseStream.Position;
+                            string line = includeReader.ReadLine();
+
+                            string ns = "core";
+                            if (line.StartsWith("namespace "))
+                                ns = line.Substring("namespace ".Length).Trim();
+                            else
+                                includeReader.BaseStream.Position = posBackup;
+
+                            Dictionary<ZZFunctionDescriptor, string[]> included = Preprocessor.ScanFunctionNamesToFunctionBodies(includeReader,
+                                    ns);
+                            foreach (ZZFunctionDescriptor desc in fnBodiesText.Keys)
+                            {
+                                Lexer lex = new Lexer(fnBodiesText[desc]);
+                                Token[] toks = lex.Lex();
+                                SyntaxTree.FunctionBodySyntaxTreeNode primaryNode = new Parser(toks).Parse().GetMainNode();
+                                GlobalContext.AddFunc(desc, primaryNode);
+                            }
+                        }
+                        catch
+                        {
+                            Console.WriteLine($"Failed to parse included file {file}.");
+                            return 5;
+                        }
+                    }
+
+                    sr.Dispose();
+
+                    SyntaxTree.FunctionBodySyntaxTreeNode fnMain = GlobalContext.GetFunctionOrReturnNullIfNotPresent("Main", 
+                        out ZZFunctionDescriptor mainDescriptor);
+                    if (fnMain == null)
+                    {
+                        Console.WriteLine("No main function in source file, aborting...");
+                        return 1;
+                    }
+
+                    ZZObject retVal = null;
+
                     if (mainDescriptor.Arguments.Length > 1)
                     {
                         Console.WriteLine("Main() had an argument count greater than one.");
@@ -141,12 +166,18 @@ namespace cathode_rt
                         GlobalContext.Variables.Add(mainDescriptor.Arguments[0], new ZZArray(argumentsPassed.ToArray()));
                     }
 
-                    retVal = Executor.Execute(GlobalContext, "Main", fnMain);
+                    executionStarted = true;
+                    retVal = fnMain.Execute(GlobalContext);
 #if !DEBUG
-            }
+                }
                 catch (ExecutorRuntimeException ex)
                 {
                     Console.WriteLine("*****");
+                    if (executionStarted)
+                        Console.WriteLine("[IN EXECUTION]");
+                    else
+                        Console.WriteLine("[IN PARSING]");
+
                     Console.WriteLine(ex.Message);
                     Console.WriteLine("*****");
 

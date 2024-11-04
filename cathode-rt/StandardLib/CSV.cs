@@ -112,7 +112,7 @@ namespace cathode_rt
             public CSVEntry[][] Parse()
             {
                 if (Pointer == 0)
-                    throw new Exception("GetHead() was not called before parsing the data");
+                    throw new Exception("GetHeaderLine() was not called before parsing the data");
 
                 List<CSVEntry[]> lines = new List<CSVEntry[]>();
 
@@ -122,10 +122,10 @@ namespace cathode_rt
                 return lines.ToArray();
             }
 
-            public CSVEntry[] GetHead()
+            public CSVEntry[] GetHeaderLine()
             {
                 if (Pointer != 0)
-                    throw new Exception("GetHead() was already called");
+                    throw new Exception("GetHeaderLine() was already called");
 
                 return ParseLine();
             }
@@ -165,9 +165,9 @@ namespace cathode_rt
                     separator = ((ZZString)sep).Contents[0];
                 }
 
-                // Parse head
+                // Parse header
                 CSVBackend.CSVParser parser = new CSVBackend.CSVParser(data.Contents, separator);
-                CSVBackend.CSVEntry[] headItems = parser.GetHead();
+                CSVBackend.CSVEntry[] headItems = parser.GetHeaderLine();
 
                 List<ZZObject>[] listsForHeadItems = new List<ZZObject>[headItems.Length];
                 for (int i = 0; i < headItems.Length; ++i)

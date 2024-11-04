@@ -144,10 +144,10 @@ namespace cathode_rt
         [ZZFunction("core", "Format")]
         public static ZZString FormatStr(ZZString str, ZZArray objs)
         {
-            ZZString nw = str;
+            ZZString nw = new ZZString(str.Contents);
 
             for (int i = 0; i < objs.Objects.Length; ++i)
-                nw.Contents = str.Contents.Replace("$" + i.ToString(), 
+                nw.Contents = nw.Contents.Replace("$" + i.ToString(), 
                     objs.Objects[i].ToInLanguageString().Contents);
 
             return nw;

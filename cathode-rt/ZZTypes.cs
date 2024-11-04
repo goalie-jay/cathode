@@ -8,12 +8,11 @@ using System.Threading.Tasks;
 
 namespace cathode_rt
 {
-    // TODO: Replace all instances of if (x is ZZObject whatevs) with (if x.ObjectType == ZZObjectType.whatevs)
-    // This will be a huge optimization but will take a while to do
     public enum ZZObjectType : byte
     {
-        OBJECT,
-        STRING,
+        OBJECT = 99, /*Wayne Gretzky*/
+
+        STRING = 0,
         FLOAT,
         INTEGER,
         BYTE,
@@ -22,7 +21,7 @@ namespace cathode_rt
         VOID,
         STRUCT,
         TUPLE,
-        ARRAY
+        ARRAY,
     }
 
     public abstract class ZZObject
@@ -40,6 +39,35 @@ namespace cathode_rt
         public virtual ZZString ToInLanguageString()
         {
             return new ZZString("[object]");
+        }
+
+        public object ConvertToSpecificType()
+        {
+            switch (ObjectType)
+            {
+                case ZZObjectType.STRING:
+                    return (ZZString)this;
+                case ZZObjectType.FLOAT:
+                    return (ZZFloat)this;
+                case ZZObjectType.INTEGER:
+                    return (ZZInteger)this;
+                case ZZObjectType.BYTE:
+                    return (ZZByte)this;
+                case ZZObjectType.FILEHANDLE:
+                    return (ZZFileHandle)this;
+                case ZZObjectType.LONGPOINTER:
+                    return (ZZLongPointer)this;
+                case ZZObjectType.VOID:
+                    return (ZZVoid)this;
+                case ZZObjectType.STRUCT:
+                    return (ZZStruct)this;
+                case ZZObjectType.TUPLE:
+                    return (ZZTuple)this;
+                case ZZObjectType.ARRAY:
+                    return (ZZArray)this;
+                default:
+                    throw new NotImplementedException();
+            }
         }
     }
 

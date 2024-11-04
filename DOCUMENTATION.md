@@ -49,6 +49,10 @@ Expressions are evaluated from right to left. Keep that in mind when writing exp
 
 *	Flips the sign of the number type supplied
 
+### ^ (lhs ^ rhs)
+
+*	Produces the bitwise XOR (exclusive or) of two integers
+
 ### [] (array[index])
 
 *	Produces the value at the given index of the array to be used in an expression
