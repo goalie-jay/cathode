@@ -18,6 +18,6 @@
 
 #### MkCsv()
 
-*	Arguments: head (array)
+*	Arguments: header (array)
 *	Returns: struct
-*	Description: Creates a new CSV struct with blank values and the given head labels and returns that struct
+*	Description: Creates a new CSV struct with blank values and the given header labels and returns that struct
