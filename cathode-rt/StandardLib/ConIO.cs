@@ -37,6 +37,18 @@ namespace cathode_rt
             return ZZVoid.Void;
         }
 
+        [ZZFunction("conio", "cMode")]
+        public static ZZVoid SetConsoleSize(ZZInteger w, ZZInteger h)
+        {
+            int intW = (int)w.Value, intH = (int)h.Value;
+
+            if (intW < 14 || intH < 1)
+                throw new ArgumentException();
+
+            Console.SetWindowSize((int)w.Value, (int)h.Value);
+            return ZZVoid.Void;
+        }
+
         [ZZFunction("conio", "cWidth")]
         public static ZZInteger GetConsoleWidth()
         {

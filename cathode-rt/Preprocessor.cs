@@ -39,7 +39,9 @@ namespace cathode_rt
 
                 if (line.StartsWith("include "))
                 {
-                    string incl = line.Substring("include ".Length).Trim('"');
+                    // Now expand it to make coding a little less annoying
+                    string incl = Environment.ExpandEnvironmentVariables(
+                        line.Substring("include ".Length).Trim('"'));
 
                     // Trace includes from that file
                     StreamReader sr = null;

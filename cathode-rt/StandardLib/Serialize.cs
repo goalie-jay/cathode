@@ -6,6 +6,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using static cathode_rt.SerializationBackend;
 
 namespace cathode_rt
 {
@@ -88,7 +89,7 @@ namespace cathode_rt
 
         public static (ZZObject obj, string name) DeserializeRecursive(SerialData topLevel)
         {
-            ZZObject retObj = null;
+            ZZObject retObj = ZZVoid.Void;
 
             switch (topLevel.Type)
             {

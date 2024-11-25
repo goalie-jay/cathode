@@ -51,6 +51,7 @@ namespace cathode_rt
             DIMENSION,
             INC,
             FNCALL,
+            DYNAMICCALL,
 
             // CONTROL
             // - IF
@@ -71,8 +72,6 @@ namespace cathode_rt
             public abstract SyntaxTreeNodeType NodeType { get; }
             public int Line;
             public string Function;
-
-            public ZZObject ReturnValue = null;
 
             public abstract ZZObject Execute(ExecutionContext ctx);
         }
@@ -876,6 +875,7 @@ namespace cathode_rt
                     // Backup execution context
                     using (ExecutionContext callContext = new ExecutionContext())
                     {
+                        Program.CurrentlyExecutingContext = callContext;
                         foreach (ZZFunctionDescriptor fnDesc in ctx.FunctionsAndBodies.Keys)
                             callContext.FunctionsAndBodies.Add(fnDesc, ctx.FunctionsAndBodies[fnDesc]);
 
@@ -884,6 +884,7 @@ namespace cathode_rt
                                 Parameters[i].Execute(ctx)); // Line up our values with the parameter names
 
                         ZZObject callResult = userFnPrimaryNode.Execute(callContext);
+                        Program.CurrentlyExecutingContext = ctx;
                         return callResult;
                     }
                 }
@@ -1212,6 +1213,96 @@ namespace cathode_rt
                 }
 
                 return ZZVoid.Void;
+            }
+        }
+
+        public class DynamicCallSyntaxTreeNode : SyntaxTreeNode
+        {
+            public SyntaxTreeNode Id;
+            public SyntaxTreeNode Args;
+
+            public override SyntaxTreeNodeType NodeType => SyntaxTreeNodeType.DYNAMICCALL;
+
+            public DynamicCallSyntaxTreeNode(SyntaxTreeNode id, SyntaxTreeNode args)
+            {
+                Id = id;
+                Args = args;
+            }
+
+            public override ZZObject Execute(ExecutionContext ctx)
+            {
+                ZZObject idObj = Id.Execute(ctx);
+                ZZObject argsObj = Args.Execute(ctx);
+
+                if (idObj.ObjectType != ZZObjectType.STRING)
+                    throw new InterpreterRuntimeException("Tried to perform dynamic call with non-string first operand.");
+
+                if (argsObj.ObjectType != ZZObjectType.ARRAY)
+                    throw new InterpreterRuntimeException("Tried to perform dynamic call with non-array second operand.");
+
+                string name = ((ZZString)idObj).Contents;
+
+                SyntaxTreeNode fn = ctx.GetFunctionOrReturnNullIfNotPresent(name, out ZZFunctionDescriptor desc);
+                ZZArray arr = (ZZArray)argsObj;
+
+                if (fn == null)
+                {
+                    var methodInf = ctx.LookupBuiltInFunction(name);
+
+                    if (methodInf == null)
+                        throw new InterpreterRuntimeException("Could not resolve function for dynamic call.");
+
+                    try
+                    {
+                        ParameterInfo[] invokeParams = methodInf.GetParameters();
+                        if (invokeParams.Length != arr.Objects.Length)
+                            throw new TargetParameterCountException();
+
+                        object[] fixedParams = new object[arr.Objects.Length];
+                        for (int i = 0; i < arr.Objects.Length; ++i)
+                            fixedParams[i] = arr.Objects[i];
+
+                        ZZObject retVal = (ZZObject)methodInf.Invoke(null, fixedParams);
+                        return retVal;
+                    }
+                    catch (InterpreterRuntimeException)
+                    {
+                        throw;
+                    }
+                    catch (Exception ex)
+                    {
+                        if (ex is ArgumentException || ex is TargetParameterCountException)
+                            throw new InterpreterRuntimeException("Tried to supply either an incorrect amount of parameters " +
+                                "or parameters with incorrect types to a standard function. " +
+                                "Are you calling the correct function? Did you forget " +
+                                "a type conversion?");
+                        else if (ex is TargetInvocationException)
+                            throw ex.InnerException;
+                        else
+                            throw;
+                    }
+                    // throw new InterpreterRuntimeException("Could not resolve target of dynamic call.");
+                }
+                else
+                {
+                    if (arr.Objects.Length != desc.Arguments.Length)
+                        throw new InterpreterRuntimeException("Number of arguments for dynamic call did not match number of arguments for target function.");
+
+                    using (ExecutionContext callContext = new ExecutionContext())
+                    {
+                        Program.CurrentlyExecutingContext = callContext;
+                        foreach (ZZFunctionDescriptor fnDesc in ctx.FunctionsAndBodies.Keys)
+                            callContext.FunctionsAndBodies.Add(fnDesc, ctx.FunctionsAndBodies[fnDesc]);
+
+                        for (int i = 0; i < arr.Objects.Length; ++i)
+                            callContext.Variables.Add(desc.Arguments[i],
+                                arr.Objects[i]); // Line up our values with the parameter names
+
+                        ZZObject callResult = fn.Execute(callContext);
+                        Program.CurrentlyExecutingContext = ctx;
+                        return callResult;
+                    }
+                }
             }
         }
 

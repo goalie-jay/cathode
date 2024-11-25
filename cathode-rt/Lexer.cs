@@ -52,6 +52,7 @@ namespace cathode_rt
         ESC,
         MKREF,
         DEREF,
+        DCALL,
 
         EOL,
         EOF
@@ -237,7 +238,7 @@ namespace cathode_rt
                     if (Position < Text.Length && CurrentChar == 't')
                     {
                         ++Position;
-                        if (Position < Text.Length && char.IsWhiteSpace(CurrentChar))
+                        if (Position >= Text.Length || char.IsWhiteSpace(CurrentChar))
                         {
                             ++Position;
                             return new Token(TokenType.RET, null);
@@ -394,6 +395,33 @@ namespace cathode_rt
                                 ++Position;
                                 if (Position >= Text.Length || !char.IsLetterOrDigit(CurrentChar))
                                     return new Token(TokenType.DEREF, null);
+                            }
+                        }
+                    }
+                }
+
+                Position = posBackup;
+            }
+
+            // dcall
+            if (CurrentChar == 'd')
+            {
+                int posBackup = Position;
+                ++Position;
+                if (Position < Text.Length && CurrentChar == 'c')
+                {
+                    ++Position;
+                    if (Position < Text.Length && CurrentChar == 'a')
+                    {
+                        ++Position;
+                        if (Position < Text.Length && CurrentChar == 'l')
+                        {
+                            ++Position;
+                            if (Position < Text.Length && CurrentChar == 'l')
+                            {
+                                ++Position;
+                                if (Position >= Text.Length || !char.IsLetterOrDigit(CurrentChar))
+                                    return new Token(TokenType.DCALL, null);
                             }
                         }
                     }

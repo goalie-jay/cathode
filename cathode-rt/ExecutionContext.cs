@@ -112,29 +112,6 @@ namespace cathode_rt
             return null;
         }
 
-        //public long GetIncrementResultUsingTable(ZZInteger obj)
-        //{
-        //    IncrementInformation cInfo = new IncrementInformation();
-
-        //    if (IncrementTable.ContainsKey(obj))
-        //        cInfo = IncrementTable[obj];
-
-        //    if (cInfo.Pointer >= cInfo.Values.Length)
-        //    {
-        //        // Generate more values
-        //        cInfo.Values = new long[100];
-        //        cInfo.Pointer = 0;
-
-        //        for (long i = 0; i < cInfo.Values.Length; ++i)
-        //            cInfo.Values[i] = obj.Value + i + 1;
-        //    }
-
-        //    int ptr = cInfo.Pointer;
-        //    ++cInfo.Pointer;
-
-        //    return cInfo.Values[ptr];
-        //}
-
         public System.Reflection.MethodInfo LookupBuiltInFunction(string name)
         {
             if (_disposed)
@@ -166,6 +143,10 @@ namespace cathode_rt
 
         public void AddFunc(ZZFunctionDescriptor desc, SyntaxTree.FunctionBodySyntaxTreeNode contents)
         {
+            if (FunctionsAndBodies.Keys.Any(item => item.Name == desc.Name))
+                throw new PreprocessorException("There was a function name collision involving one or " +
+                        "more imported functions. This is not allowed.");
+
             FunctionsAndBodies.Add(desc, contents);
         }
 

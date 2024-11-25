@@ -10,6 +10,12 @@
 *	Returns: void
 *	Description: Clears the console window
 
+#### cMode(w, h)
+
+*	Arguments: w (integer), h (integer)
+*	Returns: void
+*	Description: Sets the console window size
+
 #### cWidth()
 
 *	Arguments: none

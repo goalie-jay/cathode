@@ -88,12 +88,3 @@ Expressions are evaluated from right to left. Keep that in mind when writing exp
 *	Increments the given identifier by one. The identifier must be a single variable
 *	If you're doing a loop where the increment is one (or a constant that can be achieved through multiplying the iterator) and speed is a necessity, this is the fastest way to increment your index variable
 *	This is really only a useful optimization if you're looping thousands of times
-
-#### mkref( functionIdentifier )
-
-*	Produces a reference to the given function, which must be passed as an identifier constant
-*	References produced with mkref( ) do not need to be closed, disposed, or cleaned up in any way
-
-#### deref( ref )
-
-*	Produces the function pointed to by the given reference

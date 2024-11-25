@@ -18,7 +18,13 @@ namespace cathode_rt
             return 0;
         }
 
-        [ZZFunction("core", "VoidArr")]
+        [ZZFunction("core", "ArrZero")]
+        public static ZZArray ZeroLengthArr()
+        {
+            return new ZZArray(Array.Empty<ZZObject>());
+        }
+
+        [ZZFunction("core", "Arr")]
         public static ZZArray VoidArr(ZZInteger length)
         {
             if (length.Value == 0)
@@ -285,7 +291,7 @@ namespace cathode_rt
         public static ZZVoid Assert(ZZInteger test, ZZString failureMsg)
         {
             if (test.Value == 0)
-                ThrowException(failureMsg);
+                ThrowException("Assertion Failed: " + failureMsg);
 
             return ZZVoid.Void;
         }

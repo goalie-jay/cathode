@@ -340,6 +340,14 @@ namespace cathode_rt
                             return new SyntaxTree.IfSyntaxTreeNode(expr, body);
                         }
                     }
+                case TokenType.DCALL:
+                    {
+                        SyntaxTree.SyntaxTreeNode strName = ParseLine();
+                        Consume(TokenType.COMMA);
+                        SyntaxTree.SyntaxTreeNode arrrrrPirate = ParseLine();
+
+                        return new SyntaxTree.DynamicCallSyntaxTreeNode(strName, arrrrrPirate);
+                    }
                 case TokenType.EOL:
                     // Ignore
                     return null;
