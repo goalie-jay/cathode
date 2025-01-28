@@ -89,6 +89,18 @@ namespace cathode_rt
             return new ZZString(Console.ReadLine());
         }
 
+        [ZZFunction("conio", "Pause")]
+        public static ZZVoid Pause()
+        {
+            string strPrompt = "Press any key to continue . . . ";
+
+            Console.Write(strPrompt);
+            Console.ReadKey(true);
+            Console.WriteLine();
+
+            return ZZVoid.Void;
+        }
+
         [ZZFunction("conio", "cGetX")]
         public static ZZInteger ConsoleGetXPos()
         {

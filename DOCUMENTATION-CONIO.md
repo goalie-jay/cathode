@@ -52,6 +52,12 @@
 *	Returns: string
 *	Description: Reads a line from the console and returns it
 
+#### Pause(obj)
+
+*	Arguments: none
+*	Returns: void
+*	Description: Prints "Press any key to continue . . . ", reads a key from the console, discards the read key, and returns void
+
 #### cGetX()
 
 *	Arguments: none

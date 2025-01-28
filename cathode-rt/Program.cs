@@ -12,7 +12,7 @@ namespace cathode_rt
         public static string ExecutingFile = string.Empty;
         public const int MajorVersionNumber = 0;
         public const int MinorVersionNumber = 0;
-        public const int IncrementVersionNumber = 5;
+        public const int IncrementVersionNumber = 6;
 
         static int Main(string[] args)
         {
@@ -91,6 +91,7 @@ namespace cathode_rt
                     return 1;
                 }
 
+                ZZObject retVal = null;
 #if !DEBUG
                 try
                 {
@@ -150,8 +151,6 @@ namespace cathode_rt
                         return 1;
                     }
 
-                    ZZObject retVal = null;
-
                     if (mainDescriptor.Arguments.Length > 1)
                     {
                         Console.WriteLine("Main() had an argument count greater than one.");
@@ -170,14 +169,10 @@ namespace cathode_rt
                     retVal = fnMain.Execute(GlobalContext);
 #if !DEBUG
                 }
-                catch (ExecutorRuntimeException ex)
+                catch (InterpreterRuntimeException ex)
                 {
                     Console.WriteLine("*****");
-                    if (executionStarted)
-                        Console.WriteLine("[IN EXECUTION]");
-                    else
-                        Console.WriteLine("[IN PARSING]");
-
+                    Console.WriteLine("[IN EXECUTION]");
                     Console.WriteLine(ex.Message);
                     Console.WriteLine("*****");
 
