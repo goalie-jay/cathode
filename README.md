@@ -30,7 +30,7 @@ Documentation is available [here on github](https://github.com/rocky-horror/cath
 
 ## Discord Server
 
-We're talking in [here](https://discord.gg/MCGKG46J)!
+We're talking in [here](https://discord.gg/MCGKG46J)! (That's a lie, no one talks in there)
 
 ## Code Examples
 
