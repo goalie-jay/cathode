@@ -2,26 +2,26 @@
 
 ## Namespaces
 
-*	[core](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION-CORE.md)
-*	[system](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION-SYSTEM.md)
-*	[conio](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION-CONIO.md)
-*	[fileio](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION-FILEIO.md)
-*	[array](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION-ARRAY.md)
-*	[network](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION-NETWORK.md)
-*	[tcpio](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION-TCPIO.md)
-*	[string](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION-STRING.md)
-*	[random](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION-RANDOM.md)
-*	[process](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION-PROCESS.md)
-*	[serialize](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION-SERIALIZE.md)
+*	[core](https://github.com/goalie-jay/cathode/blob/master/DOCUMENTATION-CORE.md)
+*	[system](https://github.com/goalie-jay/cathode/blob/master/DOCUMENTATION-SYSTEM.md)
+*	[conio](https://github.com/goalie-jay/cathode/blob/master/DOCUMENTATION-CONIO.md)
+*	[fileio](https://github.com/goalie-jay/cathode/blob/master/DOCUMENTATION-FILEIO.md)
+*	[array](https://github.com/goalie-jay/cathode/blob/master/DOCUMENTATION-ARRAY.md)
+*	[network](https://github.com/goalie-jay/cathode/blob/master/DOCUMENTATION-NETWORK.md)
+*	[tcpio](https://github.com/goalie-jay/cathode/blob/master/DOCUMENTATION-TCPIO.md)
+*	[string](https://github.com/goalie-jay/cathode/blob/master/DOCUMENTATION-STRING.md)
+*	[random](https://github.com/goalie-jay/cathode/blob/master/DOCUMENTATION-RANDOM.md)
+*	[process](https://github.com/goalie-jay/cathode/blob/master/DOCUMENTATION-PROCESS.md)
+*	[serialize](https://github.com/goalie-jay/cathode/blob/master/DOCUMENTATION-SERIALIZE.md)
 
 ## Data types
 
-*	[string](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION-DATATYPE-STRING.md)
-*	[float](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION-DATATYPE-FLOAT.md)
-*	[integer](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION-DATATYPE-INTEGER.md)
-*	[byte](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION-DATATYPE-BYTE.md)
-*	[filehandle](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION-DATATYPE-FILEHANDLE.md)
-*	[void](https://github.com/rocky-horror/cathode/blob/master/DOCUMENTATION-DATATYPE-VOID.md)
+*	[string](https://github.com/goalie-jay/cathode/blob/master/DOCUMENTATION-DATATYPE-STRING.md)
+*	[float](https://github.com/goalie-jay/cathode/blob/master/DOCUMENTATION-DATATYPE-FLOAT.md)
+*	[integer](https://github.com/goalie-jay/cathode/blob/master/DOCUMENTATION-DATATYPE-INTEGER.md)
+*	[byte](https://github.com/goalie-jay/cathode/blob/master/DOCUMENTATION-DATATYPE-BYTE.md)
+*	[filehandle](https://github.com/goalie-jay/cathode/blob/master/DOCUMENTATION-DATATYPE-FILEHANDLE.md)
+*	[void](https://github.com/goalie-jay/cathode/blob/master/DOCUMENTATION-DATATYPE-VOID.md)
 
 ## Operators
 
