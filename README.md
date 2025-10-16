@@ -4,9 +4,7 @@
 
 A dynamically-typed, interpreted programming language
 
-## ######
 ## HEY
-## ######
 * Cathode has been superseded. It is no longer in active development as I have created another language that better suits my needs. I will be making that language public shortly.
 
 ## Features
